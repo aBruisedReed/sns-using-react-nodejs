@@ -1,10 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
 import AsyncTest from './AsyncTest';
+import Login from './Login';
+import PostWrite from './PostWrite';
+import PostList from './PostList';
 
 function App() {
   return (
-    <div className="App">
+    <div>
+      <Login></Login>
+      <PostWrite></PostWrite>
+      <PostList></PostList>
       <AsyncTest></AsyncTest>
     </div>
   );
