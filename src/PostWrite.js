@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAsync } from 'react-async';
+import { refresh } from './PostList';
 
 const writePost = async (dummy, { author, content }) => {
   //  왜 인지 모르겠는데 첫 번째 인자로 빈 배열이 날아온다. 
@@ -17,6 +18,7 @@ function PostWrite() {
     if(content === '') return;
     run();
     setContent('');
+    refresh();
   };
 
   const onTextareaChange = (e) => {

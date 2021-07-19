@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePostState, usePostDispatch, getPost } from './PostContext';
 
+let refresh = null;
+
 function PostList() {
+  const [number, setNumber] = useState(0); // re-rendering 을 위한 dummy state
   const state = usePostState();
   const dispatch = usePostDispatch();
   const { data, loading, error } = state.postList;
 
   const fetch = () => {
+    console.log('fetch');
     getPost(dispatch);
+  };
+
+  refresh = () => {
+    setNumber(number+1);
   };
   
   useEffect(() => {
     fetch();
-  }, []);
+  }, [number]);
 
   if(loading || !data) { return <div>Loading...</div> };
   if(error) { return <div>Error occur</div> };
@@ -24,6 +32,8 @@ function PostList() {
     </div>
   );
 }
+
+export { refresh };
 
 function PostItem({ data }) {
   return (
