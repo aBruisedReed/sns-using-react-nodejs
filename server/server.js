@@ -6,7 +6,7 @@ const cors = require('cors');
 // cors 모듈로 cors 문제 해결
 app.use(cors());
 
-// body-parser 추가 
+// body-parser 사용 
 app.use(express.json());
 
 // /api 연결에 대해 api(index.js)로 연결
