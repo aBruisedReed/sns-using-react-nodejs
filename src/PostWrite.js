@@ -11,7 +11,7 @@ const writePost = async (dummy, { author, content }) => {
 
 function PostWrite() {
   const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('Kim Jin Hyeok');
+  const [author, setAuthor] = useState('kimjjjinhyeok');
   const { res, error, isLoading, run } = useAsync({ deferFn: writePost, author, content });
 
   const writeSubmit = () => {

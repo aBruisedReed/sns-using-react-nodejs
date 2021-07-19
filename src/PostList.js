@@ -51,7 +51,7 @@ function PostItem({ data }) {
       <div className="middle">
         <div className="content">{data.content}</div>
         <div className="like">LIKE : {data.like}</div>
- PostStateContext     </div>
+     </div>
       <div className="lower">
         {data.comments ? data.comments.map(cmt => {
           return (

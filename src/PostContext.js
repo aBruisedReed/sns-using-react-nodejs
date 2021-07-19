@@ -6,7 +6,7 @@ const intialState = {
     loading: false,
     data: null,
     error: null
-  }
+  },
 };
 
 const loadingState = {

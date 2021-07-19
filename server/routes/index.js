@@ -13,8 +13,12 @@ var Post = new moongoose.Schema({
   like: Number,
   commments: Array
 });
-
 var postModel = moongoose.model('Post', Post);
+
+// login session
+var checkUser = function(req) {
+  return true; // 임시
+};
 
 router.get('/', function(req, res) {
   res.send({ greeting: 'Hello React Node.js', ps: 'data from node.js' });
@@ -36,6 +40,25 @@ router.post('/write', function(req, res, next) {
       res.json({ status: 'SUCCESS' });
     }
   });
+});
+
+router.post('/modify', function(req, res, next) {
+  if(checkUser(req)) {
+    postModel.findOne({ _id: req.body._id }, function(err, post) {
+      if(err) {
+        throw err;
+      } else {
+        post.content = req.body.content;
+        post.save(function(err) {
+          if(err) { 
+            throw err;
+          } else { 
+            res.json({ status: 'SUCCESS' });
+          }
+        })
+      }
+    });
+  }
 });
 
 router.get('/load', function(req, res, next) {
