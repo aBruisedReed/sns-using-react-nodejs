@@ -1,15 +1,15 @@
-import './App.css';
 import Login from './Login';
 import PostWrite from './PostWrite';
 import PostList from './PostList';
+import { PostProvider } from './PostContext';
 
 function App() {
   return (
-    <div>
+    <PostProvider>
       <Login></Login>
       <PostWrite></PostWrite>
       <PostList></PostList>
-    </div>
+    </PostProvider>
   );
 }
 

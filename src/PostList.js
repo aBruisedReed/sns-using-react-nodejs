@@ -1,16 +1,20 @@
-import React from 'react';
-import { useAsync } from 'react-async';
-import axios from 'axios';
-
-const loadPostList = async () => {
-  const res = await axios.get('http://localhost:3002/api/load');
-  return res.data;
-};
+import React, { useEffect } from 'react';
+import { usePostState, usePostDispatch, getPost } from './PostContext';
 
 function PostList() {
-  const { data, error, isLoading, reload } = useAsync({ promiseFn: loadPostList });
-  console.log('reload', reload);
-  if(isLoading) { return <div>Loading...</div> };
+  const state = usePostState();
+  const dispatch = usePostDispatch();
+  const { data, loading, error } = state.postList;
+
+  const fetch = () => {
+    getPost(dispatch);
+  };
+  
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  if(loading || !data) { return <div>Loading...</div> };
   if(error) { return <div>Error occur</div> };
   return (
     <div>
@@ -37,7 +41,7 @@ function PostItem({ data }) {
       <div className="middle">
         <div className="content">{data.content}</div>
         <div className="like">LIKE : {data.like}</div>
-      </div>
+ PostStateContext     </div>
       <div className="lower">
         {data.comments ? data.comments.map(cmt => {
           return (
