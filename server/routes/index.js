@@ -24,6 +24,14 @@ router.get('/', function(req, res) {
   res.send({ greeting: 'Hello React Node.js', ps: 'data from node.js' });
 });
 
+// post list load
+router.get('/posts', function(req, res, next) {
+  postModel.find({}, function(err, data) {
+    res.json(data);
+  });
+});
+
+// write post
 router.post('/posts', function(req, res, next) {
   var post = new postModel();
   post.author = req.body.author;
@@ -42,6 +50,7 @@ router.post('/posts', function(req, res, next) {
   });
 });
 
+// modify post
 router.put('/posts/:id', function(req, res, next) {
   if(checkUser(req)) {
     postModel.findOne({ _id: req.params.id }, function(err, post) {
@@ -61,10 +70,39 @@ router.put('/posts/:id', function(req, res, next) {
   }
 });
 
-router.get('/posts', function(req, res, next) {
-  postModel.find({}, function(err, data) {
-    res.json(data);
-  });
+// del post
+router.delete('/posts/:id', function(req, res, next) {
+  if(checkUser(req)) {
+    postModel.deleteOne({ _id: req.params.id }, function(err) {
+      if(err) {
+        throw err;
+      } else {
+        res.json({ status: 'SUCCESS' });
+      }
+    })
+  }
 });
+
+// like post
+router.put('/posts/:id/like', function(req, res, next) {
+  // todo: 유저에게 like 한 포스트 리스트를 만들어서 여러번 like 못하게 제한
+  if(checkUser(req)) {
+    postModel.findOne({ _id: req.params.id }, function(err, post) {
+      if(err) {
+        throw err;
+      } else {
+        post.like = post.like+1;
+        post.save(function(err) {
+          if(err) { 
+            throw err;
+          } else { 
+            res.json({ status: 'SUCCESS' });
+          }
+        })
+      }
+    });
+  }
+});
+
 
 module.exports = router;

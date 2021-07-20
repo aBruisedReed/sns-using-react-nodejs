@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePostState, usePostDispatch, getPost } from './PostContext';
+import axios from 'axios';
 
 let refresh = null;
 
@@ -37,6 +38,20 @@ export { refresh };
 
 function PostItem({ data }) {
   const [modifyToggle, setModifyToggle] = useState(false);
+
+  // handling like button
+  const [like, setLike] = useState(data.like);
+  const handleLike = () => {
+    axios.put(`http://localhost:3002/api/posts/${data._id}/like`);
+    setLike(like+1);
+  };
+
+  // handling delete button
+  const handleDelete = () => {
+    axios.delete(`http://localhost:3002/api/posts/${data._id}`);
+    refresh();
+  };
+
   return (
     <div>
       <img src={data.img} alt="" />
@@ -45,13 +60,13 @@ function PostItem({ data }) {
         <div className="date">{data.date}</div>
         <div className="buttons">
           <button>Modify</button>
-          <button>Delete</button>
-          <button>Like</button>
+          <button onClick={handleDelete}>Delete</button>
+          <button onClick={handleLike}>Like</button>
         </div>
       </div>
       <div className="middle">
         <div className="content">{data.content}</div>
-        <div className="like">LIKE : {data.like}</div>
+        <div className="like">LIKE : {like}</div>
      </div>
       <div className="lower">
         {data.comments ? data.comments.map(cmt => {
