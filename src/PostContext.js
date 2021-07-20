@@ -84,7 +84,7 @@ export function usePostDispatch() {
 export async function getPost(dispatch) {
   dispatch({ type: 'GET_POST' });
   try {
-    const res = await axios.get('http://localhost:3002/api/load');
+    const res = await axios.get('http://localhost:3002/api/posts');
     dispatch({ type: 'GET_POST_SUC', data: res.data });
   } catch (e) {
     dispatch({ type: 'GET_POST_ERR', error: e });

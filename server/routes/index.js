@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
   res.send({ greeting: 'Hello React Node.js', ps: 'data from node.js' });
 });
 
-router.post('/write', function(req, res, next) {
+router.post('/posts', function(req, res, next) {
   var post = new postModel();
   post.author = req.body.author;
   post.picture = req.body.picture;
@@ -42,9 +42,9 @@ router.post('/write', function(req, res, next) {
   });
 });
 
-router.post('/modify', function(req, res, next) {
+router.put('/posts/:id', function(req, res, next) {
   if(checkUser(req)) {
-    postModel.findOne({ _id: req.body._id }, function(err, post) {
+    postModel.findOne({ _id: req.params.id }, function(err, post) {
       if(err) {
         throw err;
       } else {
@@ -61,7 +61,7 @@ router.post('/modify', function(req, res, next) {
   }
 });
 
-router.get('/load', function(req, res, next) {
+router.get('/posts', function(req, res, next) {
   postModel.find({}, function(err, data) {
     res.json(data);
   });

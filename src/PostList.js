@@ -36,6 +36,7 @@ function PostList() {
 export { refresh };
 
 function PostItem({ data }) {
+  const [modifyToggle, setModifyToggle] = useState(false);
   return (
     <div>
       <img src={data.img} alt="" />

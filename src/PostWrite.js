@@ -5,7 +5,7 @@ import { refresh } from './PostList';
 
 const writePost = async (dummy, { author, content }) => {
   //  왜 인지 모르겠는데 첫 번째 인자로 빈 배열이 날아온다. 
-  const res = await axios.post('http://localhost:3002/api/write', { author, content });
+  const res = await axios.post('http://localhost:3002/api/posts', { author, content });
   return res.data;
 };
 
