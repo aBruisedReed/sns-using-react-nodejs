@@ -11,7 +11,7 @@ var Post = new moongoose.Schema({
   content: String,
   date: Date,
   like: Number,
-  commments: Array
+  comments: Array
 });
 var postModel = moongoose.model('Post', Post);
 
@@ -24,12 +24,29 @@ router.get('/', function(req, res) {
   res.send({ greeting: 'Hello React Node.js', ps: 'data from node.js' });
 });
 
-// post list load
+// get posts 
 router.get('/posts', function(req, res, next) {
   postModel.find({}, function(err, data) {
-    res.json(data);
+    if(err) {
+      throw err;
+    } else {
+      res.json(data);
+    }
   });
 });
+
+// get post
+router.get('/posts/:id', function(req, res, next) {
+  const id = req.params.id;
+  postModel.find({ _id: id }, function(err, data) {
+    if(err) {
+      throw err;
+    } else {
+      res.json(data);
+    }
+  });
+});
+
 
 // write post
 router.post('/posts', function(req, res, next) {
@@ -39,7 +56,7 @@ router.post('/posts', function(req, res, next) {
   post.content = req.body.content;
   post.date = Date.now();
   post.like = 0;
-  post.commments = [];
+  post.comments = [];
 
   post.save(function (err) {
     if(err) {
@@ -52,8 +69,9 @@ router.post('/posts', function(req, res, next) {
 
 // modify post
 router.put('/posts/:id', function(req, res, next) {
+  const id = req.params.id
   if(checkUser(req)) {
-    postModel.findOne({ _id: req.params.id }, function(err, post) {
+    postModel.findOne({ _id: id }, function(err, post) {
       if(err) {
         throw err;
       } else {
@@ -72,8 +90,9 @@ router.put('/posts/:id', function(req, res, next) {
 
 // del post
 router.delete('/posts/:id', function(req, res, next) {
+  const id = req.params.id;
   if(checkUser(req)) {
-    postModel.deleteOne({ _id: req.params.id }, function(err) {
+    postModel.deleteOne({ _id: id }, function(err) {
       if(err) {
         throw err;
       } else {
@@ -85,13 +104,56 @@ router.delete('/posts/:id', function(req, res, next) {
 
 // like post
 router.put('/posts/:id/like', function(req, res, next) {
+  const id = req.params.id;
   // todo: 유저에게 like 한 포스트 리스트를 만들어서 여러번 like 못하게 제한
   if(checkUser(req)) {
-    postModel.findOne({ _id: req.params.id }, function(err, post) {
+    postModel.findOne({ _id: id }, function(err, post) {
       if(err) {
         throw err;
       } else {
         post.like = post.like+1;
+        post.save(function(err) {
+          if(err) { 
+            throw err;
+          } else { 
+            res.json({ status: 'SUCCESS' });
+          }
+        })
+      }
+    });
+  }
+});
+
+// comment add at post
+router.post('/posts/:id/comments', function(req, res, next) {
+  const id = req.params.id;
+  if(checkUser(req)) {
+    postModel.findOne({ _id: id }, function(err, post) {
+      if(err) {
+        throw err;
+      } else {
+        post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment });
+        post.save(function(err) {
+          if(err) { 
+            throw err;
+          } else { 
+            res.json({ status: 'SUCCESS' });
+          }
+        })
+      }
+    });
+  }
+});
+
+// del comment at post
+router.delete('/posts/:id/comments/:idx', function(req, res, next) {
+  const { id, idx } = req.params;
+  if(checkUser(req)) {
+    postModel.findOne({ _id: id }, function(err, post) {
+      if(err) {
+        throw err;
+      } else {
+        post.comments = post.comments.filter((comment, index) => index != idx);
         post.save(function(err) {
           if(err) { 
             throw err;
