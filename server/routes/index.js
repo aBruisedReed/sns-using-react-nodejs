@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-// db setting 
+// db 
 var moongoose = require('mongoose');
 var dbconfig = require('../../.config/db-config.json');
 var db = moongoose.connect(`mongodb+srv://${dbconfig.username}:${dbconfig.password}@cluster1.uryod.mongodb.net/surn?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
