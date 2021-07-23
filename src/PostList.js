@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { usePostState, usePostDispatch, getPost } from './PostContext';
 import axios from 'axios';
 
+// todo: 순서 역순에 무한 스크롤 구현
+
 let updateList = null;
 
 function PostList() {

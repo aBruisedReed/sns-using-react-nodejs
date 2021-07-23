@@ -9,10 +9,14 @@ const theme = {
   palette: {
     white: '#FFFFFF',
     lightGray: '#F0F2F5',
+    lightDarkGray: '#E4E6EB',
+    lightDarkDarkGray: '#C1C6D1',
     gray: '#65676B',
     paleBlue: '#E7F3FF',
     blue: '#0771ED',
-    black: '#050505'
+    lightBlue: '#E6F2FE',
+    black: '#050505',
+    red: '#F12849',
   }
 }; 
 
@@ -29,6 +33,9 @@ const GlobalStyle = createGlobalStyle`
     border: none;
     outline: none;
     background: transparent;
+  }
+  .btn {
+    cursor: pointer;
   }
 `;
 
