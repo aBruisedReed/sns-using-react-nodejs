@@ -1,7 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { BsPencilSquare, BsDot } from 'react-icons/bs';
+import { RiMoonClearFill } from 'react-icons/ri';
+import { BiExit } from 'react-icons/bi';
 import styled, { ThemeContext }  from 'styled-components';
 import ReactTooltip from 'react-tooltip';
+import Switch from 'react-switch';
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -110,6 +113,75 @@ const TopbarDropdownBlock = styled.div`
     font-size: 20px;
     color: ${props=>props.theme.palette.gray};
   }
+
+  .my-profile {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid ${props=>props.theme.palette.lightGray};
+    border-bottom: 1px solid ${props=>props.theme.palette.lightGray};
+  }
+  .my-profile .profile {
+    height: 70px;
+    width: 70px;
+    border-radius: 70px;
+  }
+  .my-profile * {
+    font-weight: bold;
+  }
+
+  .night-mode {
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    border-bottom: 1px solid ${props=>props.theme.palette.lightGray};
+  }
+
+  .night-mode .icon-wrap {
+    align-items: center;
+    justify-content: center;
+    background: ${props=>props.theme.palette.lightGray};
+    height: 36px;
+    width: 36px;
+    border-radius: 36px;
+  }
+
+  .night-mode .text {
+    margin-left: 10px;
+    width: calc(100% - 36px - 56px - 10px);
+  }
+
+  .logout {
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    border-bottom: 1px solid ${props=>props.theme.palette.lightGray};
+  }
+
+  .logout .icon-wrap {
+    align-items: center;
+    justify-content: center;
+    background: ${props=>props.theme.palette.lightGray};
+    height: 36px;
+    width: 36px;
+    border-radius: 36px;
+  }
+
+  .logout .text {
+    margin-left: 10px;
+    width: calc(100% - 36px - 10px);
+  }
+
+  .footer {
+    flex-direction: column;
+    margin-top: 8px;
+    font-size: 10px;
+    color: ${props=>props.theme.palette.gray};
+  }
+
 `;
 const testChats = [
   {
@@ -154,9 +226,21 @@ const testNotis = [
   }
 ];
 function TopbarDropdown({ menuNumber }) {
+  // todo: 메세지 수가 많을 경우 모두 보기 버튼 추가해서 페이지 넘기기
   const theme = useContext(ThemeContext);
   const chatsData = testChats; //test
   const notisData = testNotis;
+  const testMe = {
+    name: '김진혁'
+  }
+
+  const [darkMode, setDarkMode] = useState(false);
+  const handleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+  const clickDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
   switch(menuNumber) {
     case 0:
       return (
@@ -237,11 +321,45 @@ function TopbarDropdown({ menuNumber }) {
           <ReactTooltip delayShow={200}/>
         </>
       );
-    case 88: 
+    case 2:
       return (
         <>
           <TopbarDropdownBlock>
-
+            <div className="header">
+              <h1>계정</h1>
+            </div>
+            <div className="my-profile btn">
+              <div className="profile" >
+                <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+              </div>
+              <div className="info">
+                <div className="who">김진혁</div>
+                <div className="info-lower">
+                  내 프로필 보기
+                </div>
+              </div>
+            </div>
+            <div className="night-mode btn" onClick={clickDarkMode}>
+              <div className="icon-wrap">
+                <RiMoonClearFill size="22px" color={theme.palette.gray} ></RiMoonClearFill>
+              </div>
+              <div className="text">다크 모드</div>
+              <Switch uncheckedIcon={false} checked={darkMode}></Switch>
+            </div>
+            <div className="logout btn">
+              <div className="icon-wrap">
+                <BiExit size="22px" color={theme.palette.gray} />
+              </div>
+              <div className="text">로그아웃</div>
+            </div>
+            <div className="footer">
+              <div className="footer-1">
+                github: <a href="https://github.com/aBruisedReed"> https://github.com/aBruisedReed</a>
+              </div>
+              <div className="footer-2">
+                email:snare909@gmail.com
+              </div>
+            </div>
           </TopbarDropdownBlock>
           <ReactTooltip delayShow={200}/>
         </>
