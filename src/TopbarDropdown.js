@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { BsPencilSquare, BsDot } from 'react-icons/bs';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { BiExit } from 'react-icons/bi';
@@ -181,7 +181,6 @@ const TopbarDropdownBlock = styled.div`
     font-size: 10px;
     color: ${props=>props.theme.palette.gray};
   }
-
 `;
 const testChats = [
   {
@@ -225,12 +224,37 @@ const testNotis = [
     unread: false
   }
 ];
-function TopbarDropdown({ menuNumber }) {
+function TopbarDropdown({ menu, closeMenu, topbarDom }) {
+  // when outside of dropdown click, close menu
+  const [menuNumber, setMenuNumber] = useState(menu);
+  const menuDom = useRef();
+
+  useEffect(() => {
+    setMenuNumber(menu);
+  }, [menu]);
+  
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleClickOutside = (e) => {
+    console.log('topbarDom', topbarDom);
+    if(menuDom.current === null || menuDom.current === undefined || topbarDom.current === null || topbarDom.current === undefined) {
+      return;
+    }
+    if(!menuDom.current.contains(e.target) && !topbarDom.current.contains(e.target)) { 
+      closeMenu();
+    } 
+  };
+  
   // todo: 메세지 수가 많을 경우 모두 보기 버튼 추가해서 페이지 넘기기
   const theme = useContext(ThemeContext);
   const chatsData = testChats; //test
   const notisData = testNotis;
-  const testMe = {
+  const testMe = { // todo: dynamic username
     name: '김진혁'
   }
 
@@ -245,7 +269,7 @@ function TopbarDropdown({ menuNumber }) {
     case 0:
       return (
         <>
-          <TopbarDropdownBlock>
+          <TopbarDropdownBlock ref={menuDom} >
             <div className="header"> 
               <h1>채팅</h1>
               <div data-tip="새 메세지" className="new-msg btn">
@@ -284,7 +308,7 @@ function TopbarDropdown({ menuNumber }) {
     case 1: 
       return (
         <>
-          <TopbarDropdownBlock>
+          <TopbarDropdownBlock ref={menuDom} >
             <div className="header">
               <h1>알림</h1>
             </div>
@@ -324,7 +348,7 @@ function TopbarDropdown({ menuNumber }) {
     case 2:
       return (
         <>
-          <TopbarDropdownBlock>
+          <TopbarDropdownBlock ref={menuDom} >
             <div className="header">
               <h1>계정</h1>
             </div>

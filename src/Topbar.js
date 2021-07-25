@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import styled, { css, keyframes, ThemeContext } from 'styled-components';
 import { BsSearch, BsPeopleFill, BsPeople } from 'react-icons/bs';
 import { AiFillHome, AiOutlineHome } from 'react-icons/ai';
@@ -53,6 +53,7 @@ const TopbarBlock = styled.div`
     justify-content: flex-start;
     align-items: center;
     margin-left: 10px;
+    z-index: 1;
   }
   .left .home {
     margin-right: 10px;
@@ -140,6 +141,7 @@ const TopbarBlock = styled.div`
 function Topbar() {
   const theme = useContext(ThemeContext);
   const history = useHistory();
+  const topbarDom = useRef();
 
   // left
   const clickHome = () => {
@@ -240,29 +242,34 @@ function Topbar() {
     }
   }
 
-
   const clickMsg = () => {
-    setActiveRightMenu(0);
     if(activeRightMenu === 0) {
       setActiveRightMenu(99);
+      return;
     }
-  }
+    setActiveRightMenu(0);
+  };
   const clickNoti = () => {
-    setActiveRightMenu(1);
     if(activeRightMenu === 1) {
       setActiveRightMenu(99);
+      return;
     }
-  }
+    setActiveRightMenu(1);
+  };
   const clickMenu = () => {
-    setActiveRightMenu(2);
     if(activeRightMenu === 2) {
       setActiveRightMenu(99);
+      return;
     }
-  }
+    setActiveRightMenu(2);
+  };
+  const closeMenu = () => { 
+    setActiveRightMenu(99);
+  };
 
   return (
     <>
-      <TopbarBlock searchDisappear={searchDisappear}>
+      <TopbarBlock searchDisappear={searchDisappear} ref={topbarDom} >
         <div className="left">
           <div onClick={clickHome} className="home btn">
             <img src={process.env.PUBLIC_URL + '/logo1.png'} alt="logo" /> 
@@ -301,7 +308,7 @@ function Topbar() {
           }
         </div>
       </TopbarBlock>
-      <TopbarDropdown menuNumber={activeRightMenu} />
+      <TopbarDropdown closeMenu={closeMenu} menu={activeRightMenu} topbarDom={topbarDom} />
       <ReactTooltip delayShow={200}/>
     </>
   );
