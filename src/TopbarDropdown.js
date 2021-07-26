@@ -14,7 +14,7 @@ const TopbarDropdownBlock = styled.div`
   flex-direction: column;
   width: 320px;
   background: ${props => props.theme.palette.white};
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
@@ -184,6 +184,7 @@ const TopbarDropdownBlock = styled.div`
 `;
 const testChats = [
   {
+    _id: '114',
     img: 'asdf', 
     who: '홍길동',
     recent: '어디야?',
@@ -191,6 +192,7 @@ const testChats = [
     unread: true
   },
   {
+    _id: '2345t2dsf',
     img: 'asdf', // == id로 이미지
     who: '홍길동',
     recent: '어디야?',
@@ -200,6 +202,7 @@ const testChats = [
 ];
 const testNotis = [
   {
+    _id: '24gcgsd',
     img: 'asdf',
     who: '김용균',
     what: 'cmt', // cmt or like
@@ -208,6 +211,7 @@ const testNotis = [
     unread: true
   },
   {
+    _id: '235612gfd',
     img: 'asdf',
     who: '김용균',
     what: 'cmt', // cmt or like
@@ -216,6 +220,7 @@ const testNotis = [
     unread: true
   },
   {
+    _id: '123tdfv',
     img: 'asdf',
     who: '김용균',
     what: 'like', // cmt or like
@@ -241,7 +246,6 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   }, []);
 
   const handleClickOutside = (e) => {
-    console.log('topbarDom', topbarDom);
     if(menuDom.current === null || menuDom.current === undefined || topbarDom.current === null || topbarDom.current === undefined) {
       return;
     }
@@ -279,7 +283,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
             <div className="chats">
               {chatsData !== null ?
                 chatsData.map(data => (
-                  <div className="chat btn">
+                  <div className="chat btn" key={data._id}>
                     <div className="profile" >
                       <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
                     </div>
@@ -298,7 +302,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                     </div>
                   </div>
                 )) :
-                <div class="empty-page">채팅이 없습니다.</div>
+                <div className="empty-page">채팅이 없습니다.</div>
               }
             </div>
           </TopbarDropdownBlock>
@@ -315,7 +319,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
             <div className="notis">
               {notisData !== null ?
                   notisData.map(data => (
-                    <div class="noti btn">
+                    <div className="noti btn" key={data._id}>
                       <div className="profile">
                         <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
                       </div>
@@ -338,7 +342,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                       </div>
                     </div>
                   )) :
-                  <div class="empty-page">알림이 없습니다.</div>
+                  <div className="empty-page">알림이 없습니다.</div>
               }
             </div>
           </TopbarDropdownBlock>
@@ -368,7 +372,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                 <RiMoonClearFill size="22px" color={theme.palette.gray} ></RiMoonClearFill>
               </div>
               <div className="text">다크 모드</div>
-              <Switch uncheckedIcon={false} checked={darkMode}></Switch>
+              <Switch onChange={handleDarkMode} checkedIcon={false} uncheckedIcon={false} checked={darkMode}></Switch>
             </div>
             <div className="logout btn">
               <div className="icon-wrap">

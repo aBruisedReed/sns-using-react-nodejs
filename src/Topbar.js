@@ -35,7 +35,7 @@ const TopbarBlock = styled.div`
   width: 100%;
   height: 56px;
   background: ${props => props.theme.palette.white};
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   justify-content: space-between;
 
   & * {
@@ -178,7 +178,7 @@ function Topbar() {
     switch(activeTab) {
       case 0: 
         return (
-          <div class="tab-wrap">
+          <div className="tab-wrap">
             <div className="home-tab btn active" onClick={clickHomeTab}>
               <AiFillHome size="25px" color={theme.palette.blue} /> 
             </div>
@@ -189,7 +189,7 @@ function Topbar() {
         );
       case 1: 
         return (
-          <div class="tab-wrap">
+          <div className="tab-wrap">
             <div className="home-tab btn inactive" onClick={clickHomeTab}>
               <AiOutlineHome size="25px" color={theme.palette.gray} /> 
             </div>
@@ -292,7 +292,7 @@ function Topbar() {
         </div>
         <div className="right">
           {checkLogin ? 
-            <div class="menu-wrap">
+            <div className="menu-wrap">
               <div onClick={clickMsg} data-tip="채팅" className="message btn">
                 <FiMessageSquare color={getRightMenuColor(activeRightMenu).msg} size="20px"></FiMessageSquare>
               </div>

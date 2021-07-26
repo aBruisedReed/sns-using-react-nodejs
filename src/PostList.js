@@ -108,6 +108,7 @@ function PostItem(props) {
     </div>
   );
 }
+// todo: hashtag, 검색까지
 
 export default PostList;
 

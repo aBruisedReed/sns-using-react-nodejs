@@ -1,8 +1,7 @@
-import PostWrite from './PostWrite';
-import PostList from './PostList';
 import { PostProvider } from './PostContext';
 import Topbar from './Topbar';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import PostColumn from './PostColumn';
 
 // todo: dark mode, light mode 구현 
 const theme = {
@@ -17,6 +16,7 @@ const theme = {
     lightBlue: '#E6F2FE',
     black: '#050505',
     red: '#F12849',
+    green: '#45BD62',
   }
 }; 
 
@@ -46,8 +46,8 @@ function App() {
       <Topbar>
       </Topbar>
       <PostProvider>
-        <PostWrite></PostWrite>
-        <PostList></PostList>
+        <PostColumn>
+        </PostColumn>
       </PostProvider>
     </ThemeProvider>
   );
