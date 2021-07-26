@@ -246,9 +246,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   }, []);
 
   const handleClickOutside = (e) => {
-    if(menuDom.current === null || menuDom.current === undefined || topbarDom.current === null || topbarDom.current === undefined) {
-      return;
-    }
+    if(menuDom.current === null || menuDom.current === undefined || topbarDom.current === null || topbarDom.current === undefined) return;
     if(!menuDom.current.contains(e.target) && !topbarDom.current.contains(e.target)) { 
       closeMenu();
     } 

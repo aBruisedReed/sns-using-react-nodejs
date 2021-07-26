@@ -13,6 +13,8 @@ const theme = {
     gray: '#65676B',
     paleBlue: '#E7F3FF',
     blue: '#0771ED',
+    darkBlue: '#196ED8',
+    darkDarkBlue: '#1354A5',
     lightBlue: '#E6F2FE',
     black: '#050505',
     red: '#F12849',
@@ -34,6 +36,17 @@ const GlobalStyle = createGlobalStyle`
     outline: none;
     background: transparent;
   }
+  textarea {
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none; /*remove the resize handle on the bottom right*/
+   }   
   .btn {
     cursor: pointer;
   }

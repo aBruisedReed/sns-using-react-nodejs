@@ -3,7 +3,7 @@ const app = express();
 const api = require('./routes/index');
 const cors = require('cors');
 
-// cors 모듈로 cors 문제 해결
+// cors 문제 해결
 app.use(cors());
 
 // body-parser 사용 
