@@ -9,6 +9,9 @@ import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import TopbarDropdown from './TopbarDropdown';
 
+// todo: home, home-tab 눌렀을 때 리스트 재 로드
+// todo: loading 시 로딩 아이콘 
+
 // css anims
 const searchIn = keyframes`
   from {
