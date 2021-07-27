@@ -105,7 +105,7 @@ router.delete('/posts/:id', function(req, res, next) {
 // like post
 router.put('/posts/:id/like', function(req, res, next) {
   const id = req.params.id;
-  // todo: 유저에게 like 한 포스트 리스트를 만들어서 여러번 like 못하게 제한
+  // todo: 유저에게 like 한 포스트 리스트를 만들어서 같은 유저가 여러번 like 못하게 제한
   if(checkUser(req)) {
     postModel.findOne({ _id: id }, function(err, post) {
       if(err) {

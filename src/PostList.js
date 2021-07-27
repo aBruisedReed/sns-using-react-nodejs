@@ -4,6 +4,8 @@ import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
+import { BiLike, BiComment } from 'react-icons/bi';
+
 
 // todo: 순서 역순에 무한 스크롤 구현
 
@@ -52,6 +54,11 @@ function PostItem(props) {
     setData(res.data[0]);
   };
 
+  // three dot menu
+  const [menuToggle, setMenuToggle] = useState(false);
+  const postMenu = () => {
+    setMenuToggle(!menuToggle);
+  };
   // modify button
   const [modifyToggle, setModifyToggle] = useState(false);
   const handleModify = () => {
@@ -70,6 +77,7 @@ function PostItem(props) {
   };
 
   // comment
+  const [cmtVisible, setCmtVisible] = useState(false);
   const [cmt, setCmt] = useState('');
   const handleCmtChange = (e) => {
     setCmt(e.target.value);
@@ -86,10 +94,22 @@ function PostItem(props) {
       updatePost();
     };
   }
-
-  const [menuToggle, setMenuToggle] = useState(false);
-  const postMenu = () => {
-    setMenuToggle(!menuToggle);
+  const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
+    return (
+      <div key={idx}>{cmt.author}: {cmt.comment}<button onClick={handleDelCmt(idx)}>X</button></div>
+    );
+  }) : null; 
+  // todo: 개행 처리, 아래 참고
+  // {this.props.data.content.split("\n").map((line) => { //this.props.data.content: 내용
+  //             return (
+  //               <span>
+  //                 {line}
+  //                 <br />
+  //               </span>
+  //             );
+  //           })}
+  const showCmt = () => {
+    setCmtVisible(true);
   };
 
   // todo: 현재 사용자와 포스트 글쓴이가 같다면 ... 눌러서 수정, 삭제
@@ -125,19 +145,41 @@ function PostItem(props) {
       </div>
       <div className="middle">
         <div className="content">{data.content}</div>
-        <div className="like">LIKE : {data.like}</div>
-      </div>
-      <div className="buttons">
-        <button onClick={handleLike}>Like</button>
+        <div className="people-tags"></div>
+        <div className="hash-tags"></div>
+        <div className="imgs"></div>
       </div>
       <div className="lower">
-        {data.comments ? data.comments.map((cmt, idx) => {
-          return (
-            <div key={idx}>{cmt.author}: {cmt.comment}<button onClick={handleDelCmt(idx)}>X</button></div>
-          );
-        }) : null }
-        <input type="text" value={cmt} onChange={handleCmtChange} />
-        <button onClick={cmtSubmit}>COMMENT</button>
+        <div className="info">
+          <div className="like">좋아요 {data.like}개</div>
+          <div className="comment" onClick={showCmt}>댓글 {data.comments ? data.comments.length : 0}개</div>
+        </div>
+        <div className="btns">
+          <div className="wrap-btn">
+            <div className="btn-like btn" onClick={handleLike}>
+              <div className="wrap-icon">
+                <BiLike />
+              </div>
+              <div className="text">좋아요</div>
+            </div>
+          </div>
+          <div className="wrap-btn">
+            <div className="btn-like btn" onClick={showCmt}>
+              <div className="wrap-icon">
+                <BiComment />
+              </div>
+              <div className="text">댓글 달기</div>
+            </div>
+          </div>
+        </div>
+        {cmtVisible && 
+          <div class="cmt-section">
+            <input type="text" value={cmt} onChange={handleCmtChange} />
+            <button onClick={cmtSubmit}>COMMENT</button>
+            {cmtListJsx}
+          </div>
+        }
+        {}
       </div>
     </div>
   );

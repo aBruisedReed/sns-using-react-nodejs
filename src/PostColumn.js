@@ -16,7 +16,7 @@ const PostColumnBlock = styled.div`
   .post {
     display: flex;
     flex-direction: column;
-    padding: 12px 16px;
+    padding: 12px 16px 0px 12px;
     width: 100%;
     background: ${props=>props.theme.palette.white};
     border-radius: 10px;
@@ -30,6 +30,7 @@ const PostColumnBlock = styled.div`
 
   // top post to write
   .top {
+    padding-bottom: 12px;
   }
 
   .top .upper, .top .lower {
@@ -166,6 +167,52 @@ const PostColumnBlock = styled.div`
   }
   .post-item .post-menu .text-icon span {
     height: auto;
+  }
+  .post-item .middle {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .post-item .lower { 
+    flex-direction: column;
+  }
+  .post-item .lower .info {
+    padding: 10px 0;
+    justify-content: space-between;
+    color: ${props=>props.theme.palette.gray};
+  }
+  .post-item .lower .comment {
+    cursor: pointer;
+  }
+  .post-item .lower .btns {
+    border-top: 1px solid ${props=>props.theme.palette.lightDarkGray};
+  }
+  .post-item .lower .btns .wrap-btn {
+    color: ${props=>props.theme.palette.gray};
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 0;
+    background: none;
+  }
+  .post-item .lower .btn {
+    justify-content: center;
+    align-items: center;
+    flex: 2;
+    border-radius: 10px;
+  }
+  .post-item .lower .btn:hover { 
+    background: ${props=>props.theme.palette.lightGray};
+  }
+  .post-item .lower .btn:acitve { 
+    background: ${props=>props.theme.palette.lightDarkGray};
+  }
+  .post-item .lower .wrap-icon {
+    background: none;
+  }
+  .post-item .lower .text {
+    justify-content: center;
+    align-items: center;
   }
 `;
 
