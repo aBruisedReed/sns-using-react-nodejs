@@ -5,6 +5,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { BiLike, BiComment } from 'react-icons/bi';
+import { VscClose } from 'react-icons/vsc';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -33,7 +34,7 @@ function PostList() {
   if(error) { return <div>Error occur</div> };
   return (
     <div className="post-list">
-      {data.map((item, idx) => {
+      {data.slice(0).reverse().map((item, idx) => {
         return (<PostItem key={item._id} data={item}></PostItem>);
       })}
     </div>
@@ -77,14 +78,17 @@ function PostItem(props) {
   };
 
   // comment
+  // todo: del isMyCmt에 따라서 버튼
+  const [isMyCmt, setIsMyCmt] = useState(true);
   const [cmtVisible, setCmtVisible] = useState(false);
   const [cmt, setCmt] = useState('');
   const handleCmtChange = (e) => {
     setCmt(e.target.value);
   };
-  const cmtSubmit = async () => {
+  const cmtSubmit = async (e) => {
+    if(e.key !== 'Enter' || e.target.value === '') return;
     // todo: current user 동적으로 
-    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: 'current user', comment: cmt });
+    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: '김진혁', comment: cmt });
     setCmt('');
     updatePost();
   };
@@ -96,7 +100,24 @@ function PostItem(props) {
   }
   const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
     return (
-      <div key={idx}>{cmt.author}: {cmt.comment}<button onClick={handleDelCmt(idx)}>X</button></div>
+      <div className="wrap-cmt" key={idx}>
+        <div className="profile">
+          <div className="wrap-img">
+            <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+          </div>
+        </div>
+        <div className="wrap-content">
+          <div className="left">
+            <div className="name">{cmt.author}<span className="date">&nbsp;2일</span></div>
+            <div className="content">{cmt.comment}</div>
+          </div>
+          {isMyCmt &&
+          <div className="del-btn btn" onClick={handleDelCmt(idx)}>
+            <VscClose />
+          </div>
+          }
+        </div>
+      </div>
     );
   }) : null; 
   // todo: 개행 처리, 아래 참고
@@ -174,12 +195,19 @@ function PostItem(props) {
         </div>
         {cmtVisible && 
           <div class="cmt-section">
-            <input type="text" value={cmt} onChange={handleCmtChange} />
-            <button onClick={cmtSubmit}>COMMENT</button>
+            <div className="wrap-input-section">
+              <div className="profile">
+                <div className="wrap-img">
+                  <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                </div>
+              </div>
+              <div className="wrap-input">
+                <input placeholder="댓글을 게시하려면 Enter 키를 누르세요..." type="text" value={cmt} onChange={handleCmtChange} onKeyPress={cmtSubmit}/>
+              </div>
+            </div>
             {cmtListJsx}
           </div>
         }
-        {}
       </div>
     </div>
   );
@@ -187,4 +215,3 @@ function PostItem(props) {
 // todo: hashtag, 검색까지
 
 export default PostList;
-
