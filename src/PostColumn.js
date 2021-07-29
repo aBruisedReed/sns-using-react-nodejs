@@ -320,7 +320,7 @@ function PostColumn() {
             </div>
           </div>
         </div>
-        <PostWrite visible={writeToggle} setVisible={setWriteToggle}></PostWrite>
+        <PostWrite visible={writeToggle} setVisible={setWriteToggle} isModify={false}></PostWrite>
         <PostList></PostList>
       </div>
     </PostColumnBlock>

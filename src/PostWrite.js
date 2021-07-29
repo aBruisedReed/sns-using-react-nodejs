@@ -162,7 +162,7 @@ const PostWriteBlock = styled.div`
   }
 `;
 
-function PostWrite({ visible, setVisible }) {
+function PostWrite({ visible, setVisible, isModify, data }) {
   const theme = useContext(ThemeContext);
   const [content, setContent] = useState('');
   const author = '김진혁'; // todo: make it dynamic
@@ -201,6 +201,15 @@ function PostWrite({ visible, setVisible }) {
       closeWrite();
     };
   };
+
+
+  // modify 
+  useEffect(() => {
+    if(isModify) {
+      setContent(data.content);
+      setIsEmpty(false);
+    }
+  }, []);
   
   if(!visible) return null;
   return (

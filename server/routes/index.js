@@ -40,6 +40,7 @@ router.get('/posts/:id', function(req, res, next) {
   const id = req.params.id;
   postModel.find({ _id: id }, function(err, data) {
     if(err) {
+      console.log('here');
       throw err;
     } else {
       res.json(data);

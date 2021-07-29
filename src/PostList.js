@@ -6,6 +6,7 @@ import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { BiLike, BiComment } from 'react-icons/bi';
 import { VscClose } from 'react-icons/vsc';
+import PostWrite from './PostWrite';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -63,6 +64,7 @@ function PostItem(props) {
   // modify button
   const [modifyToggle, setModifyToggle] = useState(false);
   const handleModify = () => {
+    setModifyToggle(true);
   };
 
   // like button
@@ -135,65 +137,66 @@ function PostItem(props) {
 
   // todo: 현재 사용자와 포스트 글쓴이가 같다면 ... 눌러서 수정, 삭제
   return (
-    <div className="post-item post">
-      <div className="upper">
-        <div className="wrap-img">
-          <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
-        </div>
-        <div className="wrap-author">
-          <div className="author">{data.author}</div>
-          <div className="date">4시간</div>
-        </div>
-        {isMine &&
-        <div class="wrap-wrap-icon">
-          <div class="wrap-icon btn" onClick={postMenu}>
-            <BsThreeDots color={palette.gray} size="20px" />
-          </div> 
-        </div>
-        }
-        {menuToggle &&
-        <div class="post-menu">
-          <div className="modify btn" onClick={handleModify}>
-            <div className="wrap-icon"><FiEdit3 /></div>
-            <div className="text-icon"><span>수정하기</span></div>
+    <>
+      <div className="post-item post">
+        <div className="upper">
+          <div className="wrap-img">
+            <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
           </div>
-          <div className="delete btn" onClick={handleDel}>
-            <div className="wrap-icon"><FiTrash2 /></div>
-            <div className="text-icon"><span>삭제하기</span></div>
+          <div className="wrap-author">
+            <div className="author">{data.author}</div>
+            <div className="date">4시간</div>
           </div>
-        </div>
-        }
-      </div>
-      <div className="middle">
-        <div className="content">{data.content}</div>
-        <div className="people-tags"></div>
-        <div className="hash-tags"></div>
-        <div className="imgs"></div>
-      </div>
-      <div className="lower">
-        <div className="info">
-          <div className="like">좋아요 {data.like}개</div>
-          <div className="comment" onClick={showCmt}>댓글 {data.comments ? data.comments.length : 0}개</div>
-        </div>
-        <div className="btns">
-          <div className="wrap-btn">
-            <div className="btn-like btn" onClick={handleLike}>
-              <div className="wrap-icon">
-                <BiLike />
+          {isMine &&
+          <div class="wrap-wrap-icon">
+            <div class="wrap-icon btn" onClick={postMenu}>
+              <BsThreeDots color={palette.gray} size="20px" />
+            </div> 
+          </div>
+          }
+          {menuToggle &&
+            <div class="post-menu">
+              <div className="modify btn" onClick={handleModify}>
+                <div className="wrap-icon"><FiEdit3 /></div>
+                <div className="text-icon"><span>수정하기</span></div>
               </div>
-              <div className="text">좋아요</div>
+              <div className="delete btn" onClick={handleDel}>
+                <div className="wrap-icon"><FiTrash2 /></div>
+                <div className="text-icon"><span>삭제하기</span></div>
+              </div>
+            </div>
+          }
+        </div>
+        <div className="middle">
+          <div className="content">{data.content}</div>
+          <div className="people-tags"></div>
+          <div className="hash-tags"></div>
+          <div className="imgs"></div>
+        </div>
+        <div className="lower">
+          <div className="info">
+            <div className="like">좋아요 {data.like}개</div>
+            <div className="comment" onClick={showCmt}>댓글 {data.comments ? data.comments.length : 0}개</div>
+          </div>
+          <div className="btns">
+            <div className="wrap-btn">
+              <div className="btn-like btn" onClick={handleLike}>
+                <div className="wrap-icon">
+                  <BiLike />
+                </div>
+                <div className="text">좋아요</div>
+              </div>
+            </div>
+            <div className="wrap-btn">
+              <div className="btn-like btn" onClick={showCmt}>
+                <div className="wrap-icon">
+                  <BiComment />
+                </div>
+                <div className="text">댓글 달기</div>
+              </div>
             </div>
           </div>
-          <div className="wrap-btn">
-            <div className="btn-like btn" onClick={showCmt}>
-              <div className="wrap-icon">
-                <BiComment />
-              </div>
-              <div className="text">댓글 달기</div>
-            </div>
-          </div>
-        </div>
-        {cmtVisible && 
+          {cmtVisible && 
           <div class="cmt-section">
             <div className="wrap-input-section">
               <div className="profile">
@@ -207,9 +210,11 @@ function PostItem(props) {
             </div>
             {cmtListJsx}
           </div>
-        }
+          }
+        </div>
       </div>
-    </div>
+      <PostWrite data={data} visible={modifyToggle} setVisible={setModifyToggle} isModify={true}></PostWrite>
+    </>
   );
 }
 // todo: hashtag, 검색까지
