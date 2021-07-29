@@ -170,11 +170,15 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   const [isEmpty, setIsEmpty] = useState(true);
 
   const writePost = async () => {
-    await axios.post('http://localhost:3002/api/posts', { author, content });
-    setContent('');
-    setIsEmpty(true);
-    closeWrite();
-    updateList();
+    if(isModify) {
+      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content });
+    } else {
+      await axios.post('http://localhost:3002/api/posts', { author, content });
+    }
+      setContent('');
+      setIsEmpty(true);
+      closeWrite();
+      updateList();
   };
 
   // todo: 글자 수 일정 수 넘어가면 글자 축소, 다 많아지면 스크롤
