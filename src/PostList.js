@@ -7,6 +7,7 @@ import { ThemeContext } from 'styled-components';
 import { BiLike, BiComment } from 'react-icons/bi';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
+import moment from 'moment';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -110,7 +111,7 @@ function PostItem(props) {
         </div>
         <div className="wrap-content">
           <div className="left">
-            <div className="name">{cmt.author}<span className="date">&nbsp;2일</span></div>
+            <div className="name">{cmt.author}<span className="date">&nbsp;{moment(cmt.date).fromNow()}</span></div>
             <div className="content">{cmt.comment}</div>
           </div>
           {isMyCmt &&
@@ -145,17 +146,17 @@ function PostItem(props) {
           </div>
           <div className="wrap-author">
             <div className="author">{data.author}</div>
-            <div className="date">4시간</div>
+            <div className="date">{moment(data.date).fromNow()}</div>
           </div>
           {isMine &&
-          <div class="wrap-wrap-icon">
-            <div class="wrap-icon btn" onClick={postMenu}>
+          <div className="wrap-wrap-icon">
+            <div className="wrap-icon btn" onClick={postMenu}>
               <BsThreeDots color={palette.gray} size="20px" />
             </div> 
           </div>
           }
           {menuToggle &&
-            <div class="post-menu">
+            <div className="post-menu">
               <div className="modify btn" onClick={handleModify}>
                 <div className="wrap-icon"><FiEdit3 /></div>
                 <div className="text-icon"><span>수정하기</span></div>
@@ -197,7 +198,7 @@ function PostItem(props) {
             </div>
           </div>
           {cmtVisible && 
-          <div class="cmt-section">
+          <div className="cmt-section">
             <div className="wrap-input-section">
               <div className="profile">
                 <div className="wrap-img">

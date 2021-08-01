@@ -2,6 +2,9 @@ import { PostProvider } from './PostContext';
 import Topbar from './Topbar';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import PostColumn from './PostColumn';
+import moment from 'moment';
+import 'moment/locale/ko';
+
 
 // todo: dark mode, light mode 구현 
 const theme = {
@@ -53,6 +56,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  moment.locale('ko');
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

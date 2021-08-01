@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 // db 
-var moongoose = require('mongoose');
-var dbconfig = require('../../.config/db-config.json');
-var db = moongoose.connect(`mongodb+srv://${dbconfig.username}:${dbconfig.password}@cluster1.uryod.mongodb.net/surn?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
-var Post = new moongoose.Schema({
+const moongoose = require('mongoose');
+const db = moongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster1.uryod.mongodb.net/surn?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
+const Post = new moongoose.Schema({
   author: String,
   picture: String,
   content: String,
@@ -13,7 +13,7 @@ var Post = new moongoose.Schema({
   like: Number,
   comments: Array
 });
-var postModel = moongoose.model('Post', Post);
+const postModel = moongoose.model('Post', Post);
 
 // login session
 var checkUser = function(req) {
@@ -133,7 +133,7 @@ router.post('/posts/:id/comments', function(req, res, next) {
       if(err) {
         throw err;
       } else {
-        post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment });
+        post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, date: new Date() });
         post.save(function(err) {
           if(err) { 
             throw err;
