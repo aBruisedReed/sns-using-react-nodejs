@@ -1,4 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
+import axios from 'axios';
 import styled, { css, keyframes, ThemeContext } from 'styled-components';
 import { BsSearch, BsPeopleFill, BsPeople } from 'react-icons/bs';
 import { AiFillHome, AiOutlineHome } from 'react-icons/ai';
@@ -8,6 +9,7 @@ import { BiDownArrow } from 'react-icons/bi';
 import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import TopbarDropdown from './TopbarDropdown';
+import { FcGoogle } from 'react-icons/fc';
 
 // todo: home, home-tab 눌렀을 때 리스트 재 로드
 // todo: loading 시 로딩 아이콘 
@@ -139,6 +141,13 @@ const TopbarBlock = styled.div`
   .right .btn:active {
     background: ${props=>props.theme.palette.lightDarkDarkGray};
   }
+
+  .right .login-google {
+    width: 200px;
+    color: ${props=>props.theme.palette.gray};
+    font-weight: 500;
+    gap: 10px;
+  }
 `;
 
 function Topbar() {
@@ -215,7 +224,11 @@ function Topbar() {
 
   // right
   // login check
-  const [checkLogin, setCheckLogin] = useState(true);
+  const [checkLogin, setCheckLogin] = useState(false);
+
+  const clickLogin = () => {
+    document.location.href = 'http://localhost:3002/auth/login/google';
+  };
 
   const [activeRightMenu, setActiveRightMenu] = useState(99);
   const defaultRightMenu = {
@@ -307,7 +320,12 @@ function Topbar() {
               </div>
             </div>
             :
-              null
+              <div className="wrap-login">
+                <div className="login-google btn" onClick={clickLogin}>
+                  <FcGoogle />
+                  <div className="text-btn">Sign in with Google</div>
+                </div>
+              </div>
           }
         </div>
       </TopbarBlock>

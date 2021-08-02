@@ -1,28 +1,12 @@
 const express = require('express');
 const router = express.Router();
-require('dotenv').config({ path: `${__dirname}/../../.env` });
-
-// db 
-const moongoose = require('mongoose');
-const db = moongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster1.uryod.mongodb.net/surn?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true });
-const Post = new moongoose.Schema({
-  author: String,
-  picture: String,
-  content: String,
-  date: Date,
-  like: Number,
-  comments: Array
-});
-const postModel = moongoose.model('Post', Post);
+const postModel = require('../config/db').postModel;
+const userModel = require('../config/db').userModel;
 
 // login session
 var checkUser = function(req) {
-  return true; // 임시
+  return true; // 임시 use session!
 };
-
-router.get('/', function(req, res) {
-  res.send({ greeting: 'Hello React Node.js', ps: 'data from node.js' });
-});
 
 // get posts 
 router.get('/posts', function(req, res, next) {

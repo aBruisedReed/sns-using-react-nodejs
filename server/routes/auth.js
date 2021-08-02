@@ -1,37 +1,20 @@
 const express = require('express');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const router = express.Router();
+const passport = require('passport');
 require('dotenv').config({ path: `${__dirname}/../../.env` });
 
-// authentication using passport
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // process.nextTick() => 이벤트 루프의 다음 tick(차례)까지 연기
-    process.nextTick(function() {
-      return done(null, profile);
-    });
-  }
-));
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-
-router.get('/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
-
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), 
-  function(req, res) {
-    res.redirect('/');
+router.get('/login/google', passport.authenticate('google', { scope: ['profile'] }))
+router.get(
+  '/login/google/callback', 
+  passport.authenticate('google', { failureRedirect: process.env.CLIENT_URL }),
+  (req, res) => {
+    res.redirect(process.env.CLIENT_URL); // no need to redirect
   }
 )
+
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 
 module.exports = router;
