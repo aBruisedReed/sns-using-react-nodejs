@@ -30,7 +30,6 @@ app.use('/auth', auth);
 
 // todo: del it
 app.get('/dev/session', function(req, res, next) {
-  console.log('sess', req.session);
   res.json(req.session);
 })
 

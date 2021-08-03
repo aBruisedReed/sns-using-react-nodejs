@@ -62,7 +62,15 @@ export function AuthInit({ location, history }) {
   return null;
 }
 
+// get userInfo
 export function getName(authState) {
   const name = !authState.userInfo ? 'noname' : authState.userInfo.name; 
   return name;
 }
+
+export function getUserId(authState) {
+  const userId = !authState.userInfo ? 'noid' : authState.userInfo.id; 
+  return userId;
+}
+
+

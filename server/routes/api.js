@@ -11,6 +11,7 @@ var checkUser = function(req) {
 // get users
 router.get('/users', function(req, res, next) {
   userModel.find({}, function(err, data) {
+    console.log(4);
     if(err) {
       throw err;
     } else {
@@ -50,9 +51,20 @@ router.post('/posts', function(req, res, next) {
   post.author = req.body.author;
   post.picture = req.body.picture;
   post.content = req.body.content;
+  post.authorId = req.body.authorId;
   post.date = Date.now();
   post.like = 0;
   post.comments = [];
+
+  userModel.findOne({ id: req.body.authorId }, (err, user) => {
+    if(err) { throw err }
+    else {
+      user.posts = user.posts.concat(post._id);
+      user.save((err) => {
+        if(err) throw err;
+      });
+    }
+  });
 
   post.save(function (err) {
     if(err) {
@@ -88,6 +100,23 @@ router.put('/posts/:id', function(req, res, next) {
 router.delete('/posts/:id', function(req, res, next) {
   const id = req.params.id;
   if(checkUser(req)) {
+    postModel.findOne({ _id: id }, (err, post) => {
+      if(err) { throw err; } 
+      else {
+        console.log('authorid',post.authorId);
+        userModel.findOne({ id: post.authorId }, (err, user) => {
+          if(err) { throw err; }
+          else {
+            console.log('before', user.posts, typeof id);
+            user.posts = user.posts.filter(postId => postId != id);
+            user.save((err) => {
+              if(err) { throw err; }
+            });
+          }
+        });
+      }
+    });
+
     postModel.deleteOne({ _id: id }, function(err) {
       if(err) {
         throw err;
