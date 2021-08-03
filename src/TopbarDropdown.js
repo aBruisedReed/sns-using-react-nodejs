@@ -5,6 +5,7 @@ import { BiExit } from 'react-icons/bi';
 import styled, { ThemeContext }  from 'styled-components';
 import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
+import { useAuthDispatch } from './AuthContext';
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -251,6 +252,12 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
       closeMenu();
     } 
   };
+
+  const authDispatch = useAuthDispatch();
+  const clickLogout = () => {
+    authDispatch({ type: 'LOGOUT' })
+    setMenuNumber(99);
+  };
   
   // todo: 메세지 수가 많을 경우 모두 보기 버튼 추가해서 페이지 넘기기
   const theme = useContext(ThemeContext);
@@ -372,7 +379,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
               <div className="text">다크 모드</div>
               <Switch onChange={handleDarkMode} checkedIcon={false} uncheckedIcon={false} checked={darkMode}></Switch>
             </div>
-            <div className="logout btn">
+            <div className="logout btn" onClick={clickLogout}>
               <div className="icon-wrap">
                 <BiExit size="22px" color={theme.palette.gray} />
               </div>

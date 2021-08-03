@@ -1,4 +1,7 @@
+import React, { useEffect } from 'react';
+import { Route, Link } from 'react-router-dom';
 import { PostProvider } from './PostContext';
+import { AuthProvider, AuthInit } from './AuthContext';
 import Topbar from './Topbar';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import PostColumn from './PostColumn';
@@ -60,12 +63,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Topbar>
-      </Topbar>
-      <PostProvider>
-        <PostColumn>
-        </PostColumn>
-      </PostProvider>
+      <AuthProvider>
+        <Route path="/" exact={true} component={AuthInit} />
+        <Topbar />
+        <PostProvider>
+          <PostColumn />
+        </PostProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

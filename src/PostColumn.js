@@ -3,6 +3,7 @@ import PostWrite from './PostWrite';
 import PostList from './PostList';
 import styled, { ThemeContext } from 'styled-components';
 import { IoMdImages } from 'react-icons/io';
+import { useAuthState, getName } from './AuthContext';
 
 // PostList, PostWrite 등의 내용물도 여기서 css 작성
 const PostColumnBlock = styled.div`
@@ -292,9 +293,9 @@ const PostColumnBlock = styled.div`
 `;
 
 function PostColumn() {
-  const username = '김진혁'; // for test, todo: dynamic
-  const theme = useContext(ThemeContext);
   const [writeToggle, setWriteToggle] = useState(false);
+  const authState = useAuthState();
+  const username = getName(authState);
 
   const clickWrite = () => {
     setWriteToggle(true);
@@ -302,29 +303,38 @@ function PostColumn() {
   return (
     <PostColumnBlock>
       <div className="column-inner">
-        <div className="top post"> 
-          <div className="upper">
-            <div className="profile">
-              <div className="wrap-img">
-                <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
-              </div>
-            </div>
-            <div className="wrap-btn btn" onClick={clickWrite}>
-              <div className="text-upper">{username}님, 무슨 생각을 하고 계신가요?</div>
-            </div>
-          </div>
-          <div className="lower">
-            <div className="wrap-lower btn">
-              <div className="wrap-icon"><IoMdImages size="32px" color={theme.palette.green}/></div>
-              <div className="text-lower">사진 첨부하기</div>
-            </div>
-          </div>
-        </div>
+        {authState.authenticated &&
+        <PostTopWrite username={username} clickWrite={clickWrite}/>
+        }
         <PostWrite visible={writeToggle} setVisible={setWriteToggle} isModify={false}></PostWrite>
         <PostList></PostList>
       </div>
     </PostColumnBlock>
   );
 };
+
+function PostTopWrite({ clickWrite, username }) {
+  const theme = useContext(ThemeContext);
+  return (
+    <div className="top post"> 
+      <div className="upper">
+        <div className="profile">
+          <div className="wrap-img">
+            <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+          </div>
+        </div>
+        <div className="wrap-btn btn" onClick={clickWrite}>
+          <div className="text-upper">{username}님, 무슨 생각을 하고 계신가요?</div>
+        </div>
+      </div>
+      <div className="lower">
+        <div className="wrap-lower btn">
+          <div className="wrap-icon"><IoMdImages size="32px" color={theme.palette.green}/></div>
+          <div className="text-lower">사진 첨부하기</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default PostColumn;

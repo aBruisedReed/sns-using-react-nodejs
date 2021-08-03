@@ -5,21 +5,22 @@ const auth = require('./routes/auth');
 const cors = require('cors');
 const sessionConfig = require('./config/session');
 const passportConfig = require('./config/passport');
+const morgan = require('morgan');
 require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 // configs
 sessionConfig(app);
 passportConfig(app);
 
-
-// cors 
+// middleware 
 app.use(cors({
   origin: process.env.CLIENT_URL,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
 }));
-
-// body-parser 사용 
 app.use(express.json());
+app.use(morgan('dev'));
+
 
 // /api routing -> api.js
 app.use('/api', api);
@@ -29,6 +30,7 @@ app.use('/auth', auth);
 
 // todo: del it
 app.get('/dev/session', function(req, res, next) {
+  console.log('sess', req.session);
   res.json(req.session);
 })
 

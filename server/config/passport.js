@@ -11,8 +11,8 @@ module.exports = app => {
     done(null, user);
   });
 
-  passport.deserializeUser((user, done) => {
-    done(null, user);
+  passport.deserializeUser((id, done) => {
+    userModel.findById(id, (err, user) => done(err, user));
   });
 
   passport.use(new GoogleStrategy({
@@ -21,16 +21,28 @@ module.exports = app => {
     callbackURL: '/auth/login/google/callback'
   },
     function(accessToken, refreshToken, profile, done) {
-      process.nextTick(function() {
-        console.log(profile);
-        const newUser = {
-          id: profile.id,
-          name: profile.displayName,
-          image: profile.photos[0].value,
-          chats: [],
-          events: [],
-          posts: []
-        };
+      process.nextTick(async function() {
+        try {
+          let foundUser = await userModel.findOne({ id: profile.id });
+
+          if (foundUser) {
+            done(null, foundUser);
+          } else {
+            var user = new userModel();
+            user.id = profile.id;
+            user.name = profile.displayName;
+            user.image = profile.photos[0].value;
+            user.chats = [];
+            user.events = [];
+            user.posts = [];
+
+            user.save(function(err) {
+              if(err) throw err;
+            })
+          }
+        } catch (err) {
+          throw new Error('cannot make new user');
+        }
         done(null, profile);
       });
     }

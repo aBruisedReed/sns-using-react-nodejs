@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios';
 import styled, { css, keyframes, ThemeContext } from 'styled-components';
 import { BsSearch, BsPeopleFill, BsPeople } from 'react-icons/bs';
@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import TopbarDropdown from './TopbarDropdown';
 import { FcGoogle } from 'react-icons/fc';
+import { useAuthState } from './AuthContext';
 
 // todo: home, home-tab 눌렀을 때 리스트 재 로드
 // todo: loading 시 로딩 아이콘 
@@ -224,10 +225,14 @@ function Topbar() {
 
   // right
   // login check
+  const authState = useAuthState();
+  useEffect(() => {
+    setCheckLogin(authState.authenticated);
+  }, [authState]);
   const [checkLogin, setCheckLogin] = useState(false);
 
   const clickLogin = () => {
-    document.location.href = 'http://localhost:3002/auth/login/google';
+    window.open(`http://localhost:3002/auth/login/google`, "_self");
   };
 
   const [activeRightMenu, setActiveRightMenu] = useState(99);
@@ -318,7 +323,8 @@ function Topbar() {
               <div onClick={clickMenu} data-tip="계정" className="menu btn">
                 <BiDownArrow color={getRightMenuColor(activeRightMenu).menu} size="20px"></BiDownArrow>
               </div>
-            </div>
+            </div
+              >
             :
               <div className="wrap-login">
                 <div className="login-google btn" onClick={clickLogin}>

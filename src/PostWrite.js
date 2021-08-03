@@ -6,6 +6,7 @@ import { VscChromeClose } from 'react-icons/vsc';
 import { IoMdImages } from 'react-icons/io';
 import { FaUserTag, FaHashtag } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
+import { useAuthState, getName } from './AuthContext';
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -165,7 +166,8 @@ const PostWriteBlock = styled.div`
 function PostWrite({ visible, setVisible, isModify, data }) {
   const theme = useContext(ThemeContext);
   const [content, setContent] = useState('');
-  const author = '김진혁'; // todo: make it dynamic
+  const authState = useAuthState();
+  const author = getName(authState);
   const placeholder = `${author}님, 무슨 생각을 하고 계신가요?`;
   const [isEmpty, setIsEmpty] = useState(true);
 

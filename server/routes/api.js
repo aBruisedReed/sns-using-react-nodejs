@@ -7,7 +7,19 @@ const userModel = require('../config/db').userModel;
 var checkUser = function(req) {
   return true; // 임시 use session!
 };
+// --------------------user--------------------
+// get users
+router.get('/users', function(req, res, next) {
+  userModel.find({}, function(err, data) {
+    if(err) {
+      throw err;
+    } else {
+      res.json(data);
+    }
+  });
+});
 
+// --------------------post--------------------
 // get posts 
 router.get('/posts', function(req, res, next) {
   postModel.find({}, function(err, data) {
@@ -24,7 +36,6 @@ router.get('/posts/:id', function(req, res, next) {
   const id = req.params.id;
   postModel.find({ _id: id }, function(err, data) {
     if(err) {
-      console.log('here');
       throw err;
     } else {
       res.json(data);
