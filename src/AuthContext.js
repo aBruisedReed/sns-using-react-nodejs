@@ -73,4 +73,12 @@ export function getUserId(authState) {
   return userId;
 }
 
+export function checkLogin(authState) {
+    if(authState.userInfo === null) {
+      return false;
+    } else {
+      return true;
+    } 
+}
+
 

@@ -4,10 +4,12 @@ import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
-import { BiLike, BiComment } from 'react-icons/bi';
+import { BiComment } from 'react-icons/bi';
+import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
 import moment from 'moment';
+import { useAuthState, checkLogin } from './AuthContext';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -47,9 +49,22 @@ export { updateList };
 
 function PostItem(props) {
   // init using data from props
-  const [data, setData] = useState(props.data);
-  const [isMine, setIsMine] = useState(true); // props로 확인 
   const { palette } = useContext(ThemeContext);
+  const [data, setData] = useState(props.data);
+  const [isMine, setIsMine] = useState(false); // 내가 글쓴이인지
+  const [isLike, setIsLike] = useState(false); // 현재 게시물에 대한 좋아요 여부
+  const authState = useAuthState();
+
+  useEffect(() => {
+    if(authState.userInfo !== null) {
+      if(authState.userInfo.posts.includes(data._id)) {
+        setIsMine(true);
+      }
+      if(authState.userInfo.likes.includes(data._id)) {
+        setIsLike(true);
+      }
+    }
+  }, []);
 
   // update post(when comment state changed)
   const updatePost = async () => {
@@ -70,8 +85,17 @@ function PostItem(props) {
 
   // like button
   const handleLike = async () => {
-    await axios.put(`http://localhost:3002/api/posts/${data._id}/like`);
-    updatePost();
+    if(checkLogin(authState)) {
+      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, {}, {
+        headers: {
+          'x-access-token': `${authState.token}`
+        }
+      });
+      updatePost();
+    } else {
+      alert('먼저 로그인해야 합니다.');
+      return;
+    }
   };
 
   // delete button
@@ -183,7 +207,10 @@ function PostItem(props) {
             <div className="wrap-btn">
               <div className="btn-like btn" onClick={handleLike}>
                 <div className="wrap-icon">
-                  <BiLike />
+                  {isLike ? 
+                    <AiFillLike /> :
+                    <AiOutlineLike />
+                  }
                 </div>
                 <div className="text">좋아요</div>
               </div>
@@ -206,6 +233,8 @@ function PostItem(props) {
                 </div>
               </div>
               <div className="wrap-input">
+                {
+                }
                 <input placeholder="댓글을 게시하려면 Enter 키를 누르세요..." type="text" value={cmt} onChange={handleCmtChange} onKeyPress={cmtSubmit}/>
               </div>
             </div>

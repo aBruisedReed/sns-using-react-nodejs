@@ -12,9 +12,8 @@ router.get(
   passport.authenticate('google', { failureRedirect: process.env.CLIENT_URL }),
   async (req, res) => {
     try {
-      console.log(1);
       const foundUser = await userModel.findOne({ id: req.user.id });
-      console.log('founduser', foundUser);
+      let info = {};
       if(!foundUser) {
         var user = new userModel();
         user.id = req.user.id;
@@ -28,17 +27,19 @@ router.get(
         user.save(function(err) {
           if(err) throw err;
         })
-      }
-      console.log(2);
 
-      const token = jwt.sign(
-        {
-          id: req.user.id,
-          name: req.user.displayName,
-          image: req.user.photos[0].value,
-        },
-        process.env.JWT_SECRET);
-      console.log(3);
+        info = 
+          {
+            id: req.user.id,
+            name: req.user.displayName,
+            image: req.user.photos[0].value,
+          };
+      } else {
+        info = foundUser;
+      }
+      info = JSON.parse(JSON.stringify(info)); // to plain object
+      const token = jwt.sign(info, process.env.JWT_SECRET);
+      console.log('token', token);
       res.redirect(`${process.env.CLIENT_URL}?t=${token}`); 
     } catch (err) {
       throw err;
@@ -52,7 +53,7 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/check', (req, res) => {
-  
+
 });
 
 

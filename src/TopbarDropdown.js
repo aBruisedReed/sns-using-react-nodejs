@@ -256,6 +256,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const authDispatch = useAuthDispatch();
   const clickLogout = () => {
     authDispatch({ type: 'LOGOUT' })
+    window.open(`http://localhost:3000/`, "_self");
     setMenuNumber(99);
   };
   

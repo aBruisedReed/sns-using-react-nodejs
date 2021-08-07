@@ -2,11 +2,20 @@ const express = require('express');
 const router = express.Router();
 const postModel = require('../config/db').postModel;
 const userModel = require('../config/db').userModel;
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
-// login session
-var checkUser = function(req) {
-  return true; // 임시 use session!
+// check user using jwt
+const checkUser = function(req) {
+  const token = req.headers['x-access-token'];
+  let result = false;
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if(err) throw err;
+    result = true;
+  });
+  return result; // 임시 use session!
 };
+
 // --------------------user--------------------
 // get users
 router.get('/users', function(req, res, next) {
