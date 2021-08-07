@@ -2,19 +2,7 @@ const express = require('express');
 const router = express.Router();
 const postModel = require('../config/db').postModel;
 const userModel = require('../config/db').userModel;
-const jwt = require('jsonwebtoken');
-require('dotenv').config({ path: `${__dirname}/../../.env` });
-
-// check user using jwt
-const checkUser = function(req) {
-  const token = req.headers['x-access-token'];
-  let result = false;
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if(err) throw err;
-    result = true;
-  });
-  return result; // 임시 use session!
-};
+const authMiddleWare = require('../middelwares/auth');
 
 // --------------------user--------------------
 // get users
@@ -55,6 +43,7 @@ router.get('/posts/:id', function(req, res, next) {
 
 
 // write post
+router.use('/posts', authMiddleWare);
 router.post('/posts', function(req, res, next) {
   var post = new postModel();
   post.author = req.body.author;
@@ -85,104 +74,99 @@ router.post('/posts', function(req, res, next) {
 });
 
 // modify post
+router.use('/posts/:id', authMiddleWare);
 router.put('/posts/:id', function(req, res, next) {
   const id = req.params.id
-  if(checkUser(req)) {
-    postModel.findOne({ _id: id }, function(err, post) {
-      if(err) {
-        throw err;
-      } else {
-        post.content = req.body.content;
-        post.save(function(err) {
-          if(err) { 
-            throw err;
-          } else { 
-            res.json({ status: 'SUCCESS' });
-          }
-        })
-      }
-    });
-  }
+  postModel.findOne({ _id: id }, function(err, post) {
+    if(err) {
+      throw err;
+    } else {
+      post.content = req.body.content;
+      post.save(function(err) {
+        if(err) { 
+          throw err;
+        } else { 
+          res.json({ status: 'SUCCESS' });
+        }
+      })
+    }
+  });
 });
 
 // del post
+router.use('/posts/:id', authMiddleWare);
 router.delete('/posts/:id', function(req, res, next) {
   const id = req.params.id;
-  if(checkUser(req)) {
-    postModel.findOne({ _id: id }, (err, post) => {
-      if(err) { throw err; } 
-      else {
-        console.log('authorid',post.authorId);
-        userModel.findOne({ id: post.authorId }, (err, user) => {
-          if(err) { throw err; }
-          else {
-            console.log('before', user.posts, typeof id);
-            user.posts = user.posts.filter(postId => postId != id);
-            user.save((err) => {
-              if(err) { throw err; }
-            });
-          }
-        });
-      }
-    });
+  postModel.findOne({ _id: id }, (err, post) => {
+    if(err) { throw err; } 
+    else {
+      console.log('authorid',post.authorId);
+      userModel.findOne({ id: post.authorId }, (err, user) => {
+        if(err) { throw err; }
+        else {
+          console.log('before', user.posts, typeof id);
+          user.posts = user.posts.filter(postId => postId != id);
+          user.save((err) => {
+            if(err) { throw err; }
+          });
+        }
+      });
+    }
+  });
 
-    postModel.deleteOne({ _id: id }, function(err) {
-      if(err) {
-        throw err;
-      } else {
-        res.json({ status: 'SUCCESS' });
-      }
-    })
-  }
+  postModel.deleteOne({ _id: id }, function(err) {
+    if(err) {
+      throw err;
+    } else {
+      res.json({ status: 'SUCCESS' });
+    }
+  })
 });
 
 // like post
+router.use('/posts/:id/like', authMiddleWare);
 router.put('/posts/:id/like', function(req, res, next) {
   const id = req.params.id;
   // todo: 유저에게 like 한 포스트 리스트를 만들어서 같은 유저가 여러번 like 못하게 제한
-  if(checkUser(req)) {
-    postModel.findOne({ _id: id }, function(err, post) {
-      if(err) {
-        throw err;
-      } else {
-        post.like = post.like+1;
-        post.save(function(err) {
-          if(err) { 
-            throw err;
-          } else { 
-            res.json({ status: 'SUCCESS' });
-          }
-        })
-      }
-    });
-  }
+  postModel.findOne({ _id: id }, function(err, post) {
+    if(err) {
+      throw err;
+    } else {
+      post.like = post.like+1;
+      post.save(function(err) {
+        if(err) { 
+          throw err;
+        } else { 
+          res.json({ status: 'SUCCESS' });
+        }
+      })
+    }
+  });
 });
 
 // comment add at post
+router.use('/posts/:id/comments', authMiddleWare);
 router.post('/posts/:id/comments', function(req, res, next) {
   const id = req.params.id;
-  if(checkUser(req)) {
-    postModel.findOne({ _id: id }, function(err, post) {
-      if(err) {
-        throw err;
-      } else {
-        post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, date: new Date() });
-        post.save(function(err) {
-          if(err) { 
-            throw err;
-          } else { 
-            res.json({ status: 'SUCCESS' });
-          }
-        })
-      }
-    });
-  }
+  postModel.findOne({ _id: id }, function(err, post) {
+    if(err) {
+      throw err;
+    } else {
+      post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, date: new Date() });
+      post.save(function(err) {
+        if(err) { 
+          throw err;
+        } else { 
+          res.json({ status: 'SUCCESS' });
+        }
+      })
+    }
+  });
 });
 
 // del comment at post
 router.delete('/posts/:id/comments/:idx', function(req, res, next) {
   const { id, idx } = req.params;
-  if(checkUser(req)) {
     postModel.findOne({ _id: id }, function(err, post) {
       if(err) {
         throw err;
@@ -197,7 +181,6 @@ router.delete('/posts/:id/comments/:idx', function(req, res, next) {
         })
       }
     });
-  }
 });
 
 
