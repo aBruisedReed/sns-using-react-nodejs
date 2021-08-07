@@ -9,7 +9,7 @@ import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
 import moment from 'moment';
-import { useAuthState, checkLogin, getUser } from './AuthContext';
+import { useAuthState, checkLogin, useAuthDispatch, updateUser } from './AuthContext';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -54,6 +54,8 @@ function PostItem(props) {
   const [isMine, setIsMine] = useState(false); // 내가 글쓴이인지
   const [isLike, setIsLike] = useState(false); // 현재 게시물에 대한 좋아요 여부
   const authState = useAuthState();
+  const authDispatch = useAuthDispatch();
+  const authHeader = { headers: { 'x-access-token': `${authState.token}` } };
 
   useEffect(() => {
     if(authState.userInfo !== null) {
@@ -86,16 +88,9 @@ function PostItem(props) {
   // like button
   const handleLike = async () => {
     if(checkLogin(authState)) {
-      const user = await getUser(authState);
-      if(user[0].likes.includes(data._id)) {
-        setIsLike(!isLike);
-      } else {
-        setIsLike(!isLike);
-      }
-      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, { isLike }, 
-        {
-          headers: { 'x-access-token': `${authState.token}` }
-        });
+      setIsLike(!isLike);
+      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, { isLike }, authHeader);
+      await updateUser(authState, authDispatch);
       updatePost();
     } else {
       alert('먼저 로그인해야 합니다.');
@@ -239,8 +234,11 @@ function PostItem(props) {
               </div>
               <div className="wrap-input">
                 {
+                  checkLogin(authState) ?
+                    <input placeholder="댓글을 게시하려면 Enter 키를 누르세요..." type="text" value={cmt} onChange={handleCmtChange} onKeyPress={cmtSubmit}/>
+                    :
+                    <input placeholder="댓글을 게시하려면 로그인 하세요..." type="text" style={{ cursor: "not-allowed" }} readOnly />
                 }
-                <input placeholder="댓글을 게시하려면 Enter 키를 누르세요..." type="text" value={cmt} onChange={handleCmtChange} onKeyPress={cmtSubmit}/>
               </div>
             </div>
             {cmtListJsx}

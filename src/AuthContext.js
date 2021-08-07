@@ -13,6 +13,8 @@ function authReducer(state, action) {
   switch(action.type) {
     case 'LOGIN':
       return { ...state, token: action.token, authenticated: action.authenticated, userInfo: action.userInfo };
+    case 'UPDATE':
+      return { ...state, userInfo: action.userInfo };
     case 'LOGOUT':
       return initialState;
     default:
@@ -58,14 +60,16 @@ export function AuthInit({ location, history }) {
     const query = qs.parse(location.search, { ignoreQueryPrefix: true });
     if(!query.t) return null;
     dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: jwt(query.t) });
+    axios.defaults.headers.common['x-access-token'] = query.t;
     history.push('/');
   }, []);
   return null;
 }
 
-export async function getUser(authState) {
-  const res = await axios.get(`http://localhost:3002/api/users/${authState.userInfo.id}`);
-  return res.data;
+export async function updateUser(state, dispatch) {
+  const res = await axios.get(`http://localhost:3002/api/users/${state.userInfo.id}`);
+  console.log(res.data);
+  dispatch({ type: 'UPDATE', userInfo: res.data[0] });
 }
 
 // get userInfo
