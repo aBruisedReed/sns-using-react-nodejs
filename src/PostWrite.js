@@ -174,14 +174,20 @@ function PostWrite({ visible, setVisible, isModify, data }) {
 
   const writePost = async () => {
     if(isModify) {
-      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId });
+      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId }, 
+        {
+          headers: { 'x-access-token': `${authState.token}` }
+        });
     } else {
-      await axios.post('http://localhost:3002/api/posts', { author, content, authorId });
+      await axios.post('http://localhost:3002/api/posts', { author, content, authorId },
+        {
+          headers: { 'x-access-token': `${authState.token}` }
+        });
     }
-      setContent('');
-      setIsEmpty(true);
-      closeWrite();
-      updateList();
+    setContent('');
+    setIsEmpty(true);
+    closeWrite();
+    updateList();
   };
 
   // todo: 글자 수 일정 수 넘어가면 글자 축소, 다 많아지면 스크롤

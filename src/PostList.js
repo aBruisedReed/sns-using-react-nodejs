@@ -9,7 +9,7 @@ import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
 import moment from 'moment';
-import { useAuthState, checkLogin } from './AuthContext';
+import { useAuthState, checkLogin, getUser } from './AuthContext';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -86,11 +86,16 @@ function PostItem(props) {
   // like button
   const handleLike = async () => {
     if(checkLogin(authState)) {
-      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, {}, {
-        headers: {
-          'x-access-token': `${authState.token}`
-        }
-      });
+      const user = await getUser(authState);
+      if(user[0].likes.includes(data._id)) {
+        setIsLike(!isLike);
+      } else {
+        setIsLike(!isLike);
+      }
+      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, { isLike }, 
+        {
+          headers: { 'x-access-token': `${authState.token}` }
+        });
       updatePost();
     } else {
       alert('먼저 로그인해야 합니다.');

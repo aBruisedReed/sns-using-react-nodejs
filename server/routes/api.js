@@ -8,7 +8,17 @@ const authMiddleWare = require('../middelwares/auth');
 // get users
 router.get('/users', function(req, res, next) {
   userModel.find({}, function(err, data) {
-    console.log(4);
+    if(err) {
+      throw err;
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+router.get('/users/:id', function(req, res, next) {
+  const id = req.params.id;
+  userModel.find({ id: id }, function(err, data) {
     if(err) {
       throw err;
     } else {
@@ -100,11 +110,9 @@ router.delete('/posts/:id', function(req, res, next) {
   postModel.findOne({ _id: id }, (err, post) => {
     if(err) { throw err; } 
     else {
-      console.log('authorid',post.authorId);
       userModel.findOne({ id: post.authorId }, (err, user) => {
         if(err) { throw err; }
         else {
-          console.log('before', user.posts, typeof id);
           user.posts = user.posts.filter(postId => postId != id);
           user.save((err) => {
             if(err) { throw err; }
@@ -127,19 +135,36 @@ router.delete('/posts/:id', function(req, res, next) {
 router.use('/posts/:id/like', authMiddleWare);
 router.put('/posts/:id/like', function(req, res, next) {
   const id = req.params.id;
+  const isLike = req.body.isLike;
+  const userId = req.decoded.id;
   // todo: 유저에게 like 한 포스트 리스트를 만들어서 같은 유저가 여러번 like 못하게 제한
   postModel.findOne({ _id: id }, function(err, post) {
     if(err) {
       throw err;
     } else {
-      post.like = post.like+1;
-      post.save(function(err) {
-        if(err) { 
-          throw err;
-        } else { 
-          res.json({ status: 'SUCCESS' });
+      userModel.findOne({ id: userId }, (err, user) => {
+        if(err) { throw err; }
+        else {
+          if(!isLike) {
+            post.like = post.like+1;
+            user.likes = user.likes.concat(post._id);
+          } else {
+            post.like = post.like-1;
+            user.likes = user.likes.filter(postId => postId != id);
+          }
+          user.save((err) => {
+            if(err) { throw err; }
+          });
+          console.log(post.like);
+          post.save(function(err) {
+            if(err) { 
+              throw err;
+            } else { 
+              res.json({ status: 'SUCCESS' });
+            }
+          })
         }
-      })
+      });
     }
   });
 });

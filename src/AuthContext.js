@@ -1,6 +1,7 @@
 import React, { useReducer, useContext, createContext, useEffect } from 'react';
 import qs from 'qs';
 import jwt from 'jwt-decode';
+import axios from 'axios';
 
 const initialState = {
   authenticated: false,
@@ -60,6 +61,11 @@ export function AuthInit({ location, history }) {
     history.push('/');
   }, []);
   return null;
+}
+
+export async function getUser(authState) {
+  const res = await axios.get(`http://localhost:3002/api/users/${authState.userInfo.id}`);
+  return res.data;
 }
 
 // get userInfo
