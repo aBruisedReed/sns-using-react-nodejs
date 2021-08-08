@@ -5,7 +5,7 @@ import { BiExit } from 'react-icons/bi';
 import styled, { ThemeContext }  from 'styled-components';
 import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
-import { useAuthDispatch } from './AuthContext';
+import { useAuthDispatch, useAuthState } from './AuthContext';
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -231,6 +231,7 @@ const testNotis = [
   }
 ];
 function TopbarDropdown({ menu, closeMenu, topbarDom }) {
+  const authState = useAuthState();
   // when outside of dropdown click, close menu
   const [menuNumber, setMenuNumber] = useState(menu);
   const menuDom = useRef();
@@ -264,9 +265,6 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const theme = useContext(ThemeContext);
   const chatsData = testChats; //test
   const notisData = testNotis;
-  const testMe = { // todo: dynamic username
-    name: '김진혁'
-  }
 
   const [darkMode, setDarkMode] = useState(false);
   const handleDarkMode = () => {
@@ -275,6 +273,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const clickDarkMode = () => {
     setDarkMode(!darkMode);
   };
+  
   switch(menuNumber) {
     case 0:
       return (
@@ -367,9 +366,9 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                 <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
               </div>
               <div className="info">
-                <div className="who">김진혁</div>
+                <div className="who">{authState.userInfo.name}</div>
                 <div className="info-lower">
-                  내 프로필 보기
+                  내 게시글 보기
                 </div>
               </div>
             </div>

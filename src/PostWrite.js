@@ -6,7 +6,7 @@ import { VscChromeClose } from 'react-icons/vsc';
 import { IoMdImages } from 'react-icons/io';
 import { FaUserTag, FaHashtag } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
-import { useAuthState, getName, getUserId, useAuthDispatch, updateUser } from './AuthContext';
+import { useAuthState, getName, getUserId, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -170,17 +170,18 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   const authDispatch = useAuthDispatch();
   const author = getName(authState);
   const authorId = getUserId(authState);
+  const authorImg = getUserImg(authState);
   const placeholder = `${author}님, 무슨 생각을 하고 계신가요?`;
   const [isEmpty, setIsEmpty] = useState(true);
 
   const writePost = async () => {
     if(isModify) {
-      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId }, 
+      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId, authorImg }, 
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
     } else {
-      await axios.post('http://localhost:3002/api/posts', { author, content, authorId },
+      await axios.post('http://localhost:3002/api/posts', { author, content, authorId, authorImg },
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
@@ -237,7 +238,10 @@ function PostWrite({ visible, setVisible, isModify, data }) {
         <div className="author">
           <div className="profile">
             <div className="wrap-img">
+              {authorImg ? 
+              <img src={authorImg} alt="profile" /> :
               <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+              }
             </div>
             <div className="wrap-name">
               <div className="name">{author}</div>

@@ -9,7 +9,7 @@ import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
 import moment from 'moment';
-import { useAuthState, checkLogin, useAuthDispatch, updateUser } from './AuthContext';
+import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -56,6 +56,7 @@ function PostItem(props) {
   const authState = useAuthState();
   const authDispatch = useAuthDispatch();
   const authHeader = { headers: { 'x-access-token': `${authState.token}` } };
+  const userImg = getUserImg(authState);
 
   useEffect(() => {
     if(authState.userInfo !== null) {
@@ -114,7 +115,7 @@ function PostItem(props) {
   const cmtSubmit = async (e) => {
     if(e.key !== 'Enter' || e.target.value === '') return;
     // todo: current user 동적으로 
-    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id });
+    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id, authorImg: authState.userInfo.image });
     setCmt('');
     updatePost();
   };
@@ -126,14 +127,19 @@ function PostItem(props) {
   }
   const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
     let isMyCmt = false;
-    if(authState.userInfo !== null && data.authorId === authState.userInfo.id) {
+    // console.log('ai', data.authorId);
+    // console.log('ui', authState.userInfo.id);
+    if(authState.userInfo !== null && cmt.authorId === authState.userInfo.id) {
       isMyCmt = true;
     }
     return (
       <div className="wrap-cmt" key={idx}>
         <div className="profile">
           <div className="wrap-img">
+            {cmt.authorImg ? 
+            <img src={cmt.authorImg} alt="profile" /> :
             <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+            }
           </div>
         </div>
         <div className="wrap-content">
@@ -169,7 +175,10 @@ function PostItem(props) {
       <div className="post-item post">
         <div className="upper">
           <div className="wrap-img">
+            {data.authorImg ? 
+            <img src={data.authorImg} alt="profile" /> :
             <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+            }
           </div>
           <div className="wrap-author">
             <div className="author">{data.author}</div>
@@ -232,7 +241,10 @@ function PostItem(props) {
             <div className="wrap-input-section">
               <div className="profile">
                 <div className="wrap-img">
+                  {userImg ? 
+                  <img src={userImg} alt="profile" /> :
                   <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                  }
                 </div>
               </div>
               <div className="wrap-input">

@@ -3,7 +3,7 @@ import PostWrite from './PostWrite';
 import PostList from './PostList';
 import styled, { ThemeContext } from 'styled-components';
 import { IoMdImages } from 'react-icons/io';
-import { useAuthState, getName } from './AuthContext';
+import { useAuthState, getName, getUserImg } from './AuthContext';
 
 // PostList, PostWrite 등의 내용물도 여기서 css 작성
 const PostColumnBlock = styled.div`
@@ -304,7 +304,7 @@ function PostColumn() {
     <PostColumnBlock>
       <div className="column-inner">
         {authState.authenticated &&
-        <PostTopWrite username={username} clickWrite={clickWrite}/>
+        <PostTopWrite username={username} clickWrite={clickWrite} authState={authState} />
         }
         <PostWrite visible={writeToggle} setVisible={setWriteToggle} isModify={false}></PostWrite>
         <PostList></PostList>
@@ -313,14 +313,19 @@ function PostColumn() {
   );
 };
 
-function PostTopWrite({ clickWrite, username }) {
+function PostTopWrite({ clickWrite, username, authState }) {
+  const userImg = getUserImg(authState);
+  console.log('ui', userImg);
   const theme = useContext(ThemeContext);
   return (
     <div className="top post"> 
       <div className="upper">
         <div className="profile">
           <div className="wrap-img">
+            {userImg ? 
+            <img src={userImg} alt="profile" /> :
             <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+            }
           </div>
         </div>
         <div className="wrap-btn btn" onClick={clickWrite}>

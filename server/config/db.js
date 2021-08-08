@@ -5,6 +5,7 @@ const db = moongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process
 const Post = new moongoose.Schema({
   author: String,
   authorId: String,
+  authorImg: String,
   picture: String,
   content: String,
   date: Date,

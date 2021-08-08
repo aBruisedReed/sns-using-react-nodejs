@@ -75,13 +75,18 @@ export async function updateUser(state, dispatch) {
 
 // get userInfo
 export function getName(authState) {
-  const name = !authState.userInfo ? 'noname' : authState.userInfo.name; 
+  const name = !authState.userInfo ? false : authState.userInfo.name; 
   return name;
 }
 
 export function getUserId(authState) {
-  const userId = !authState.userInfo ? 'noid' : authState.userInfo.id; 
+  const userId = !authState.userInfo ? false : authState.userInfo.id; 
   return userId;
+}
+
+export function getUserImg(authState) {
+  const userImg = !authState.userInfo ? false : authState.userInfo.image; 
+  return userImg;
 }
 
 export function checkLogin(authState) {

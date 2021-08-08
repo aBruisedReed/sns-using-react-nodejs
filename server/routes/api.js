@@ -63,6 +63,7 @@ router.post('/posts', function(req, res, next) {
   post.picture = req.body.picture;
   post.content = req.body.content;
   post.authorId = req.body.authorId;
+  post.authorImg = req.body.authorImg;
   post.date = Date.now();
   post.like = 0;
   post.comments = [];
@@ -180,7 +181,7 @@ router.post('/posts/:id/comments', function(req, res, next) {
     if(err) {
       throw err;
     } else {
-      post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, authorId: req.body.authorId, date: new Date() });
+      post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, authorId: req.body.authorId, authorImg: req.body.authorImg, date: new Date() });
       post.save(function(err) {
         if(err) { 
           throw err;
