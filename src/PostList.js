@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { usePostState, usePostDispatch, getPost } from './PostContext';
+import { usePostState, usePostDispatch, getPost, getPostUser } from './PostContext';
 import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { BiComment } from 'react-icons/bi';
+import { HiOutlineChatAlt2 } from 'react-icons/hi';
 import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
@@ -16,13 +17,20 @@ import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } fro
 
 let updateList = null;
 
-function PostList() {
+function PostList({ type, match }) {
   const state = usePostState();
   const dispatch = usePostDispatch();
+  const id = match && match.params.id;
   const { data, loading, error } = state.postList;
 
   const fetch = () => {
-    getPost(dispatch);
+    switch(type) {
+      case 'all': 
+        getPost(dispatch); return;
+      case 'user':
+        getPostUser(dispatch, id); return;
+      default: return;
+    }
   };
 
   useEffect(() => {
@@ -125,6 +133,8 @@ function PostItem(props) {
       updatePost();
     };
   }
+  const handleMsg = () => {
+  }
   const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
     let isMyCmt = false;
     // console.log('ai', data.authorId);
@@ -184,14 +194,13 @@ function PostItem(props) {
             <div className="author">{data.author}</div>
             <div className="date">{moment(data.date).fromNow()}</div>
           </div>
-          {isMine &&
           <div className="wrap-wrap-icon">
             <div className="wrap-icon btn" onClick={postMenu}>
               <BsThreeDots color={palette.gray} size="20px" />
             </div> 
           </div>
-          }
-          {menuToggle &&
+          {menuToggle && (
+            isMine ? 
             <div className="post-menu">
               <div className="modify btn" onClick={handleModify}>
                 <div className="wrap-icon"><FiEdit3 /></div>
@@ -202,6 +211,13 @@ function PostItem(props) {
                 <div className="text-icon"><span>삭제하기</span></div>
               </div>
             </div>
+            :
+            <div className="post-menu">
+              <div className="chat btn" onClick={handleMsg}>
+                <div className="wrap-icon"><HiOutlineChatAlt2 /></div>
+                <div className="text-icon"><span>메세지 보내기</span></div>
+              </div>
+            </div>)
           }
         </div>
         <div className="middle">

@@ -2,10 +2,11 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { BsPencilSquare, BsDot } from 'react-icons/bs';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { BiExit } from 'react-icons/bi';
+import { useHistory } from 'react-router-dom';
 import styled, { ThemeContext }  from 'styled-components';
 import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
-import { useAuthDispatch, useAuthState } from './AuthContext';
+import { useAuthDispatch, useAuthState, getUserImg } from './AuthContext';
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -273,6 +274,11 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const clickDarkMode = () => {
     setDarkMode(!darkMode);
   };
+  const history = useHistory();
+  const viewMyPosts = () => {
+    history.push(`/users/${authState.userInfo.id}`);
+  }
+  const userImg = getUserImg(authState);
   
   switch(menuNumber) {
     case 0:
@@ -361,9 +367,12 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
             <div className="header">
               <h1>계정</h1>
             </div>
-            <div className="my-profile btn">
+            <div className="my-profile btn" onClick={viewMyPosts}>
               <div className="profile" >
-                <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                {userImg ? 
+                  <img src={userImg} alt="profile" /> :
+                  <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                }
               </div>
               <div className="info">
                 <div className="who">{authState.userInfo.name}</div>

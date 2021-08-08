@@ -27,6 +27,17 @@ router.get('/users/:id', function(req, res, next) {
   });
 });
 
+// 해당 id 유저 모든 posts
+router.get('/users/:id/posts', (req, res, next) => {
+  const id = req.params.id;
+  postModel.find({ authorId: id }, (err, data) => {
+    if(err) { throw err; }
+    else {
+      res.json(data);
+    }
+  });
+});
+
 // --------------------post--------------------
 // get posts 
 router.get('/posts', function(req, res, next) {

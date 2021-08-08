@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import PostWrite from './PostWrite';
 import PostList from './PostList';
+import { Route } from 'react-router-dom';
 import styled, { ThemeContext } from 'styled-components';
 import { IoMdImages } from 'react-icons/io';
 import { useAuthState, getName, getUserImg } from './AuthContext';
 
-// PostList, PostWrite 등의 내용물도 여기서 css 작성
 const PostColumnBlock = styled.div`
   width: 100%;
 
@@ -126,8 +126,14 @@ const PostColumnBlock = styled.div`
     margin-left: 10px;
     justify-content: center;
   }
+  .post-item .author, .post-item .wrap-img {
+    cursor: pointer;
+  }
   .post-item .author {
     font-weight: bold;
+  }
+  .post-item .author:hover {
+    text-decoration: underline;
   }
   .post-item .date {
     font-size: 13px;
@@ -307,7 +313,8 @@ function PostColumn() {
         <PostTopWrite username={username} clickWrite={clickWrite} authState={authState} />
         }
         <PostWrite visible={writeToggle} setVisible={setWriteToggle} isModify={false}></PostWrite>
-        <PostList></PostList>
+        <Route path="/" exact={true} render={() => <PostList type={'all'} />} />
+        <Route path="/users/:id/" exact={true} render={({ match }) => <PostList match={match} type={'user'} />} />
       </div>
     </PostColumnBlock>
   );
@@ -315,7 +322,6 @@ function PostColumn() {
 
 function PostTopWrite({ clickWrite, username, authState }) {
   const userImg = getUserImg(authState);
-  console.log('ui', userImg);
   const theme = useContext(ThemeContext);
   return (
     <div className="top post"> 
