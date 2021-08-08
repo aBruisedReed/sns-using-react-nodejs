@@ -61,6 +61,7 @@ export function AuthInit({ location, history }) {
     if(!query.t) return null;
     dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: jwt(query.t) });
     axios.defaults.headers.common['x-access-token'] = query.t;
+    console.log('token', jwt(query.t));
     history.push('/');
   }, []);
   return null;

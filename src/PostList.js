@@ -106,7 +106,6 @@ function PostItem(props) {
 
   // comment
   // todo: del isMyCmt에 따라서 버튼
-  const [isMyCmt, setIsMyCmt] = useState(true);
   const [cmtVisible, setCmtVisible] = useState(false);
   const [cmt, setCmt] = useState('');
   const handleCmtChange = (e) => {
@@ -115,7 +114,7 @@ function PostItem(props) {
   const cmtSubmit = async (e) => {
     if(e.key !== 'Enter' || e.target.value === '') return;
     // todo: current user 동적으로 
-    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: '김진혁', comment: cmt });
+    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id });
     setCmt('');
     updatePost();
   };
@@ -126,6 +125,10 @@ function PostItem(props) {
     };
   }
   const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
+    let isMyCmt = false;
+    if(authState.userInfo !== null && data.authorId === authState.userInfo.id) {
+      isMyCmt = true;
+    }
     return (
       <div className="wrap-cmt" key={idx}>
         <div className="profile">

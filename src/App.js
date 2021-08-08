@@ -7,6 +7,8 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import PostColumn from './PostColumn';
 import moment from 'moment';
 import 'moment/locale/ko';
+// todo: del this
+import DevTool from './DevTool';
 
 
 // todo: dark mode, light mode 구현 
@@ -69,6 +71,7 @@ function App() {
         <PostProvider>
           <PostColumn />
         </PostProvider>
+    <DevTool />
       </AuthProvider>
     </ThemeProvider>
   );

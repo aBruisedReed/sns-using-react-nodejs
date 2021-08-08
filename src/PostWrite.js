@@ -6,7 +6,7 @@ import { VscChromeClose } from 'react-icons/vsc';
 import { IoMdImages } from 'react-icons/io';
 import { FaUserTag, FaHashtag } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
-import { useAuthState, getName, getUserId } from './AuthContext';
+import { useAuthState, getName, getUserId, useAuthDispatch, updateUser } from './AuthContext';
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -167,6 +167,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   const theme = useContext(ThemeContext);
   const [content, setContent] = useState('');
   const authState = useAuthState();
+  const authDispatch = useAuthDispatch();
   const author = getName(authState);
   const authorId = getUserId(authState);
   const placeholder = `${author}님, 무슨 생각을 하고 계신가요?`;
@@ -184,6 +185,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
           headers: { 'x-access-token': `${authState.token}` }
         });
     }
+    await updateUser(authState, authDispatch);
     setContent('');
     setIsEmpty(true);
     closeWrite();

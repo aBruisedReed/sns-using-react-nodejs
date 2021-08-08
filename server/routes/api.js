@@ -30,6 +30,9 @@ router.get('/users/:id', function(req, res, next) {
 // --------------------post--------------------
 // get posts 
 router.get('/posts', function(req, res, next) {
+  // 싹 지우기 todo: for dev
+  // postModel.deleteMany({}, (err) => { if(err) throw err });
+  // userModel.deleteMany({}, (err) => { if(err) throw err });
   postModel.find({}, function(err, data) {
     if(err) {
       throw err;
@@ -177,7 +180,7 @@ router.post('/posts/:id/comments', function(req, res, next) {
     if(err) {
       throw err;
     } else {
-      post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, date: new Date() });
+      post.comments = post.comments.concat({ author: req.body.author, comment: req.body.comment, authorId: req.body.authorId, date: new Date() });
       post.save(function(err) {
         if(err) { 
           throw err;
