@@ -20,7 +20,7 @@ const PostColumnBlock = styled.div`
   .post {
     display: flex;
     flex-direction: column;
-    padding: 12px 16px 0px 12px;
+    padding-top: 12px;
     width: 100%;
     background: ${props=>props.theme.palette.white};
     border-radius: 10px;
@@ -30,6 +30,11 @@ const PostColumnBlock = styled.div`
 
   .post * {
     display: flex;
+  }
+  
+  .post>* {
+    margin-left: 16px;
+    margin-right: 16px;
   }
 
   // top post to write
