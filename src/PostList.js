@@ -12,6 +12,7 @@ import PostWrite from './PostWrite';
 import moment from 'moment';
 import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
 import { useHistory } from 'react-router-dom';
+import { Loading } from './CommonContext';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -43,7 +44,9 @@ function PostList({ type, match }) {
     fetch();
   };
 
-  if(loading || !data) { return <div>Loading...</div> };
+  if(loading || !data) {
+    return <Loading />
+  }
   if(error) { return <div>Error occur</div> };
   return (
     <div className="post-list">

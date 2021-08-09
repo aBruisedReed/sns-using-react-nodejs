@@ -10,6 +10,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 // todo: del this
 import DevTool from './DevTool';
+import { ScrollToTop } from './CommonContext';
 
 
 // todo: dark mode, light mode 구현 
@@ -67,14 +68,16 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <AuthProvider>
-        <Route path="/" exact={true} component={AuthInit} />
-        <Topbar />
-        <UserProvider>
-          <PostProvider>
-            <PostColumn />
-          </PostProvider>
-        </UserProvider>
-        <DevTool />
+        <ScrollToTop>
+          <Route path="/" exact={true} component={AuthInit} />
+          <Topbar />
+          <UserProvider>
+            <PostProvider>
+              <PostColumn />
+            </PostProvider>
+          </UserProvider>
+          <DevTool />
+        </ScrollToTop>
       </AuthProvider>
     </ThemeProvider>
   );

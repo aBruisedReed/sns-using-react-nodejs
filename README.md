@@ -72,13 +72,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ### To-do
 프로필 이름 눌렀을 때 user별 포스트 보기 ok
 /users 페이지 ok
-loading page 애니메이션
-채팅
-알림(이벤트)
+loading spin ok
 검색
 사진첨부
 해쉬태그, 인물태그
 unlimited scroll
+채팅
+알림(이벤트)
 
 
 ### 개선 사항
