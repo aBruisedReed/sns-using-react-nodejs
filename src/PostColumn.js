@@ -9,6 +9,7 @@ import { useAuthState, getName, getUserImg } from './AuthContext';
 
 const PostColumnBlock = styled.div`
   width: 100%;
+  min-height: 100vh;
   padding-bottom: 30px;
 
   .column-inner {

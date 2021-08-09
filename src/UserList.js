@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useUserState, useUserDispatch, getUser } from './UserContext';
 import { useAuthState } from './AuthContext';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
+import { Loading } from './CommonContext';
 
 const UserListDiv = styled.div`
   margin-top: 20px;
@@ -82,7 +83,7 @@ function UserList() {
   }, []);
 
   if(loading || !data) {
-    return <div>Loading...</div>
+    return <Loading />
   }
   if(error) {
     return <div>Error occur{error}</div>
