@@ -11,6 +11,7 @@ import { VscClose } from 'react-icons/vsc';
 import PostWrite from './PostWrite';
 import moment from 'moment';
 import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
+import { useHistory } from 'react-router-dom';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -35,7 +36,7 @@ function PostList({ type, match }) {
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [match]);
 
   // 외부에서 fetch 호출을 위한 함수
   updateList = () => {
@@ -47,7 +48,7 @@ function PostList({ type, match }) {
   return (
     <div className="post-list">
       {data.slice(0).reverse().map((item, idx) => {
-        return (<PostItem key={item._id} data={item}></PostItem>);
+        return (<PostItem key={item._id} data={item} />);
       })}
     </div>
   );
@@ -65,6 +66,7 @@ function PostItem(props) {
   const authDispatch = useAuthDispatch();
   const authHeader = { headers: { 'x-access-token': `${authState.token}` } };
   const userImg = getUserImg(authState);
+  const history = useHistory();
 
   useEffect(() => {
     if(authState.userInfo !== null) {
@@ -81,6 +83,10 @@ function PostItem(props) {
   const updatePost = async () => {
     const res = await axios.get(`http://localhost:3002/api/posts/${data._id}`);
     setData(res.data[0]);
+  };
+
+  const toUserPosts = () => {
+    history.push(`/users/${data.authorId}`)
   };
 
   // three dot menu
@@ -135,6 +141,11 @@ function PostItem(props) {
   }
   const handleMsg = () => {
   }
+  const CmtToUserPosts = (authorId) => {
+    return () => {
+      history.push(`/users/${authorId}`)
+    };
+  }
   const cmtListJsx = data.comments ? data.comments.map((cmt, idx) => {
     let isMyCmt = false;
     // console.log('ai', data.authorId);
@@ -144,7 +155,7 @@ function PostItem(props) {
     }
     return (
       <div className="wrap-cmt" key={idx}>
-        <div className="profile">
+        <div className="profile" onClick={CmtToUserPosts(cmt.authorId)}>
           <div className="wrap-img">
             {cmt.authorImg ? 
             <img src={cmt.authorImg} alt="profile" /> :
@@ -184,13 +195,13 @@ function PostItem(props) {
     <>
       <div className="post-item post">
         <div className="upper">
-          <div className="wrap-img">
+          <div className="wrap-img" onClick={toUserPosts}>
             {data.authorImg ? 
             <img src={data.authorImg} alt="profile" /> :
             <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
             }
           </div>
-          <div className="wrap-author">
+          <div className="wrap-author" onClick={toUserPosts}>
             <div className="author">{data.author}</div>
             <div className="date">{moment(data.date).fromNow()}</div>
           </div>

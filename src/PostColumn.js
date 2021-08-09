@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PostWrite from './PostWrite';
 import PostList from './PostList';
+import UserList from './UserList';
 import { Route } from 'react-router-dom';
 import styled, { ThemeContext } from 'styled-components';
 import { IoMdImages } from 'react-icons/io';
@@ -8,6 +9,7 @@ import { useAuthState, getName, getUserImg } from './AuthContext';
 
 const PostColumnBlock = styled.div`
   width: 100%;
+  padding-bottom: 30px;
 
   .column-inner {
     width: 648px;
@@ -126,13 +128,13 @@ const PostColumnBlock = styled.div`
     margin-left: 10px;
     justify-content: center;
   }
-  .post-item .author, .post-item .wrap-img {
+  .post-item .wrap-author, .post-item .wrap-img {
     cursor: pointer;
   }
   .post-item .author {
     font-weight: bold;
   }
-  .post-item .author:hover {
+  .post-item .wrap-author:hover {
     text-decoration: underline;
   }
   .post-item .date {
@@ -231,6 +233,7 @@ const PostColumnBlock = styled.div`
   .post-item .cmt-section .wrap-input-section {
   }
   .post-item .cmt-section .profile {
+    align-items: center;
     margin-right: 10px;
   }
   .post-item .cmt-section .wrap-img {
@@ -310,11 +313,12 @@ function PostColumn() {
     <PostColumnBlock>
       <div className="column-inner">
         {authState.authenticated &&
-        <PostTopWrite username={username} clickWrite={clickWrite} authState={authState} />
+        <Route path="/" exact={true} render={() => <PostTopWrite username={username} clickWrite={clickWrite} authState={authState} />} />
         }
         <PostWrite visible={writeToggle} setVisible={setWriteToggle} isModify={false}></PostWrite>
         <Route path="/" exact={true} render={() => <PostList type={'all'} />} />
         <Route path="/users/:id/" exact={true} render={({ match }) => <PostList match={match} type={'user'} />} />
+        <Route path="/users" exact={true} component={UserList}/>
       </div>
     </PostColumnBlock>
   );

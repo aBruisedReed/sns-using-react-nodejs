@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { PostProvider } from './PostContext';
+import { UserProvider } from './UserContext';
 import { AuthProvider, AuthInit } from './AuthContext';
 import Topbar from './Topbar';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
@@ -68,10 +69,12 @@ function App() {
       <AuthProvider>
         <Route path="/" exact={true} component={AuthInit} />
         <Topbar />
-        <PostProvider>
-          <PostColumn />
-        </PostProvider>
-    <DevTool />
+        <UserProvider>
+          <PostProvider>
+            <PostColumn />
+          </PostProvider>
+        </UserProvider>
+        <DevTool />
       </AuthProvider>
     </ThemeProvider>
   );
