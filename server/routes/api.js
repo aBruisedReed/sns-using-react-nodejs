@@ -50,7 +50,10 @@ router.get('/posts', async (req, res, next) => {
       console.log(1);
       // const data = await postModel.find({ $or:[{ author: new RegExp(keyword) }, { content: new RegExp(keyword)}] });
       // const data = await postModel.find({ $or: [{ author: new RegExp(keyword) }] });
-      const data = await postModel.find({ $or: [{ author: { $regex: keyword }}, { content: { $regex: keyword }}] });
+      const data = await postModel.find({ 
+        $or: [{ author: { $regex: keyword, $options: 'i' }}, 
+          { content: { $regex: keyword, $options: 'i' }}] 
+      });
       res.json(data);
     } else {
       console.log(2);
