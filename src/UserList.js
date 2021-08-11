@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useUserState, useUserDispatch, getUser } from './UserContext';
@@ -67,6 +67,11 @@ const UserListDiv = styled.div`
   .chat:active {
     background-color: ${props=>props.theme.palette.lightDarkGray};
   }
+  .chat.me {
+    cursor: not-allowed;
+    color: ${props=>props.theme.palette.gray};
+    background: ${props=>props.theme.palette.lightGray};
+  }
 `;
 
 function UserList() {
@@ -102,6 +107,13 @@ function UserItem({ data }) {
   const { id, name, image } = data;
   const history = useHistory();
 
+  const [isMe, setIsMe] = useState(false);
+  useEffect(() => {
+    if(authState.userInfo !== null && authState.userInfo.id === id) {
+      setIsMe(true);
+    }
+  }, []);
+
   const toUserPosts = () => {
     history.push(`/users/${id}`)
   };
@@ -117,10 +129,17 @@ function UserItem({ data }) {
       <div className="wrap-name">
         <div className="name" onClick={toUserPosts}>{name}</div>
       </div>
+    {isMe ?
+      <div className="chat btn me">
+        <div className="wrap-icon"><HiOutlineChatAlt2 /></div>
+        <div className="text-chat">메세지 보내기</div>
+      </div>
+      :
       <div className="chat btn">
         <div className="wrap-icon"><HiOutlineChatAlt2 /></div>
         <div className="text-chat">메세지 보내기</div>
       </div>
+    }
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { usePostState, usePostDispatch, getPost, getPostUser } from './PostContext';
+import { usePostState, usePostDispatch, getPost, getPostUser, getPostSearch } from './PostContext';
 import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
@@ -13,17 +13,21 @@ import moment from 'moment';
 import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
 import { useHistory } from 'react-router-dom';
 import { Loading } from './CommonContext';
+import qs from 'qs';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
 
 let updateList = null;
 
-function PostList({ type, match }) {
+function PostList({ type, match, location }) {
   const state = usePostState();
   const dispatch = usePostDispatch();
   const id = match && match.params.id;
   const { data, loading, error } = state.postList;
+  const keyword = location !== undefined ? qs.parse(location.search, {
+    ignoreQueryPrefix: true
+  }).keyword : null; 
 
   const fetch = () => {
     switch(type) {
@@ -31,13 +35,15 @@ function PostList({ type, match }) {
         getPost(dispatch); return;
       case 'user':
         getPostUser(dispatch, id); return;
+      case 'search':
+        getPostSearch(dispatch, keyword); return;
       default: return;
     }
   };
 
   useEffect(() => {
     fetch();
-  }, [match]);
+  }, [match, location]);
 
   // 외부에서 fetch 호출을 위한 함수
   updateList = () => {

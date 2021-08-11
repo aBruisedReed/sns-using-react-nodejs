@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import axios from 'axios';
+import { updateList } from './PostList';
 import styled, { css, keyframes, ThemeContext } from 'styled-components';
 import { BsSearch, BsPeopleFill, BsPeople } from 'react-icons/bs';
 import { AiFillHome, AiOutlineHome } from 'react-icons/ai';
@@ -182,6 +182,12 @@ function Topbar() {
     }
     , 250); // close animation delay
   };
+
+  const toSearchResult = (e) => {
+    if(e.key !== 'Enter' || e.target.value === '') return;
+    history.push(`/posts?keyword=${searchInput}`)
+    updateList();
+  }; 
   
   // center
   const [activeTab, setActiveTab] = useState(0);
@@ -298,8 +304,8 @@ function Topbar() {
           <div>
             {searchVisible ? 
               <div className="search-wrap active">
-                <input autoFocus onBlur={focusOutSearch} className="search-input" onChange={changeSearchInput} value={searchInput} placeholder="Surn 검색"></input> 
-                <div className="search-btn btn active"><BsSearch size="18px" color={theme.palette.gray} /></div> 
+                <input autoFocus onBlur={focusOutSearch} onKeyPress={toSearchResult} className="search-input" onChange={changeSearchInput} value={searchInput} placeholder="Surn 검색"></input> 
+                <div className="search-btn btn active" ><BsSearch size="18px" color={theme.palette.gray} /></div> 
               </div>
               :
               <div className="search-wrap">

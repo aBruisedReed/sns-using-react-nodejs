@@ -100,3 +100,13 @@ export async function getPostUser(dispatch, id) {
     dispatch({ type: 'GET_POST_ERR', error: e });
   }
 }
+
+export async function getPostSearch(dispatch, keyword) {
+  dispatch({ type: 'GET_POST' });
+  try {
+    const res = await axios.get(`http://localhost:3002/api/posts?keyword=${keyword}`);
+    dispatch({ type: 'GET_POST_SUC', data: res.data });
+  } catch (e) {
+    dispatch({ type: 'GET_POST_ERR', error: e });
+  }
+}

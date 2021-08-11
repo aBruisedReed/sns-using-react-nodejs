@@ -325,6 +325,7 @@ function PostColumn() {
         <Route path="/" exact={true} render={() => <PostList type={'all'} />} />
         <Route path="/users/:id/" exact={true} render={({ match }) => <PostList match={match} type={'user'} />} />
         <Route path="/users" exact={true} component={UserList}/>
+        <Route path="/posts" exact={true} render={({ location }) => <PostList location={location} type={'search'} />} />
       </div>
     </PostColumnBlock>
   );
