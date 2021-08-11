@@ -23,6 +23,7 @@ let updateList = null;
 function PostList({ type, match, location }) {
   const state = usePostState();
   const dispatch = usePostDispatch();
+  const history = useHistory();
   const id = match && match.params.id;
   const { data, loading, error } = state.postList;
   const keyword = location !== undefined ? qs.parse(location.search, {
@@ -50,15 +51,26 @@ function PostList({ type, match, location }) {
     fetch();
   };
 
+  const goBack = () => {
+    history.goBack();
+  };
+
   if(loading || !data) {
     return <Loading />
   }
   if(error) { return <div>Error occur</div> };
   return (
     <div className="post-list">
-      {data.slice(0).reverse().map((item, idx) => {
-        return (<PostItem key={item._id} data={item} />);
-      })}
+      {data.length !== 0 ?
+          data.slice(0).reverse().map((item, idx) => {
+            return (<PostItem key={item._id} data={item} />);
+          })
+          :
+          <div className="post-item post empty">
+            <div className="empty-text">결과가 없습니다.</div>
+            <div className="to-back btn" onClick={goBack}>뒤로가기</div>
+          </div>
+      }
     </div>
   );
 }

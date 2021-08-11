@@ -305,6 +305,18 @@ const PostColumnBlock = styled.div`
     color: ${props=>props.theme.palette.red};
   }
 
+  .empty {
+    padding-bottom: 10px;
+    font-size: 17px;
+  }
+
+  .empty .empty-text {
+  }
+
+  .empty .to-back:hover {
+    text-decoration: underline;
+  }
+
 `;
 
 function PostColumn() {
