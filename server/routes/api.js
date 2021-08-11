@@ -40,17 +40,26 @@ router.get('/users/:id/posts', (req, res, next) => {
 
 // --------------------post--------------------
 // get posts 
-router.get('/posts', function(req, res, next) {
+router.get('/posts', async (req, res, next) => {
   // 싹 지우기 todo: for dev
   // postModel.deleteMany({}, (err) => { if(err) throw err });
   // userModel.deleteMany({}, (err) => { if(err) throw err });
-  postModel.find({}, function(err, data) {
-    if(err) {
-      throw err;
+  const keyword = req.query.keyword;
+  try {
+    if(keyword) {
+      console.log(1);
+      // const data = await postModel.find({ $or:[{ author: new RegExp(keyword) }, { content: new RegExp(keyword)}] });
+      // const data = await postModel.find({ $or: [{ author: new RegExp(keyword) }] });
+      const data = await postModel.find({ $or: [{ author: { $regex: keyword }}, { content: { $regex: keyword }}] });
+      res.json(data);
     } else {
+      console.log(2);
+      const data = await postModel.find({});
       res.json(data);
     }
-  });
+  } catch (err) {
+    throw err;
+  }
 });
 
 // get post
@@ -65,6 +74,17 @@ router.get('/posts/:id', function(req, res, next) {
   });
 });
 
+// search
+router.get('/posts/:keyword', async (req, res, next) => {
+  const keyword = req.params.keyword;
+  try {
+    const foundUser = await postModel.find({ $or:[{ authorId: new RegExp(keyword) }, { content: new RegExp(keyword)}] });
+    res.json(foundUser);
+  } catch (err) {
+    throw err;
+  }
+  // mongoose find multiple conditions <<
+});
 
 // write post
 router.use('/posts', authMiddleWare);
@@ -170,7 +190,6 @@ router.put('/posts/:id/like', function(req, res, next) {
           user.save((err) => {
             if(err) { throw err; }
           });
-          console.log(post.like);
           post.save(function(err) {
             if(err) { 
               throw err;
