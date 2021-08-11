@@ -43,7 +43,7 @@ const PostColumnBlock = styled.div`
   }
 
   .top .upper, .top .lower {
-    width: 100%;
+    width: calc(100% - 32px);
   }
 
   .top .upper {
