@@ -60,6 +60,9 @@ const GlobalStyle = createGlobalStyle`
   .btn {
     cursor: pointer;
   }
+  .hidden {
+    display: none;
+  }
 `;
 
 function App() {

@@ -164,6 +164,7 @@ const PostWriteBlock = styled.div`
 `;
 
 function PostWrite({ visible, setVisible, isModify, data }) {
+  const imageInputDom = useRef();
   const theme = useContext(ThemeContext);
   const [content, setContent] = useState('');
   const authState = useAuthState();
@@ -201,6 +202,8 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   
   const closeWrite = () => {
     setVisible(false);
+    setContent('');
+    setIsEmpty(true);
   };
 
   // when click outside, close
@@ -226,6 +229,27 @@ function PostWrite({ visible, setVisible, isModify, data }) {
       setIsEmpty(false);
     }
   }, []);
+
+  // add props
+  const [imgs, setImgs] = useState([]);
+  const handleImage = (e) => {
+    setImgs(e.target.files[0]);
+  };
+  const addImage = () => {
+  };
+  const uploadImage = async () => {
+    console.log('img', imgs[0]);
+    const formData = new FormData();
+    formData.append('file', imgs[0]);
+    const res = await axios.post('http://localhost:3002/api/file/image', formData);
+    console.log(res);
+  };
+
+  const peopleTag = () => {
+  };
+
+  const hashTag = () => {
+  };
   
   if(!visible) return null;
   return (
@@ -250,14 +274,17 @@ function PostWrite({ visible, setVisible, isModify, data }) {
         </div>
         <div className="content">
           <textarea value={content} placeholder={placeholder} onChange={handleInputChange}/>
+          <div className="hidden">
+            <input ref={imageInputDom} type="file" accept='image/*' onChange={handleImage} />
+          </div>
         </div>
         <div className="lower">
           <div className="wrap-text">
             <div className="text">게시물에 추가</div>
           </div>
-          <div className="wrap-icon btn" data-tip="사진"><IoMdImages size="40px" color={theme.palette.green}/></div>
-          <div className="wrap-icon btn" data-tip="인물 태그"><FaUserTag size="40px" color={theme.palette.blue}/></div>
-          <div className="wrap-icon btn" data-tip="해쉬 태그"><FaHashtag size="40px" color={theme.palette.red}/></div>
+          <div className="wrap-icon btn" data-tip="사진" onClick={addImage}><IoMdImages size="40px" color={theme.palette.green}/></div>
+          <div className="wrap-icon btn" data-tip="인물 태그" onClick={peopleTag}><FaUserTag size="40px" color={theme.palette.blue}/></div>
+          <div className="wrap-icon btn" data-tip="해쉬 태그" onClick={hashTag}><FaHashtag size="40px" color={theme.palette.red}/></div>
         </div>
         <div className="submit">
           {

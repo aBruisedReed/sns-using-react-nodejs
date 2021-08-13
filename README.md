@@ -74,7 +74,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 /users 페이지 ok
 loading spin ok
 검색 ok
-빈 페이지(텅~) no 결과 뒤로가기 버튼
+빈 페이지(텅~) no 결과 뒤로가기 버튼 ok
 사진첨부
 해쉬태그, 인물태그
 unlimited scroll
