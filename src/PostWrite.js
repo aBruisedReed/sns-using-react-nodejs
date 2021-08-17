@@ -4,9 +4,10 @@ import { updateList } from './PostList';
 import styled, { ThemeContext } from 'styled-components';
 import { VscChromeClose } from 'react-icons/vsc';
 import { IoMdImages } from 'react-icons/io';
-import { FaUserTag, FaHashtag } from 'react-icons/fa';
+import { FaUserTag, FaHashtag, FaRegTrashAlt } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
 import { useAuthState, getName, getUserId, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
+import { useStateWithPromise } from './CommonContext';
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -87,14 +88,48 @@ const PostWriteBlock = styled.div`
   }
   // content
   .content {
-    height: 200px;
+    min-height: 200px;
     flex-direction: column;
   }
   .content textarea {
     font-size: 24px;
-    height: 100%;
-    width: 100%;
+    min-height: 200px;
+    width: calc(100% - 20px);
     margin: 10px;
+  }
+  .content .imgs {
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+  .content .imgs .wrap-icon {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 125px;
+    height: 125px;
+    color: ${props=>props.theme.palette.gray};
+  }
+  .content .imgs .wrap-img {
+    position: relative;
+  }
+  .content .imgs .wrap-img:hover .wrap-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+  }
+  .content .imgs .wrap-img:hover img {
+    opacity: 0.5;
+  }
+  .content .imgs .wrap-img {
+    width: 125px;
+    height: 125px;
+  }
+  .content .imgs .wrap-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
   // lower
@@ -144,6 +179,7 @@ const PostWriteBlock = styled.div`
     border: none;
     background: ${props=>props.theme.palette.blue};
     color: white;
+    padding: 0;
   }
   .submit .btn:hover {
     background-color: ${props=>props.theme.palette.darkBlue};
@@ -201,12 +237,12 @@ function PostWrite({ visible, setVisible, isModify, data }) {
     e.target.value.length === 0 ? setIsEmpty(true) : setIsEmpty(false);
   };
   
-  const closeWrite = () => {
+  const closeWrite = async () => {
+    await setImg(null);
+    await setImgsUrl([]);
     setVisible(false);
     setContent('');
     setIsEmpty(true);
-    setImg([]);
-    setImgsUrl([]);
   };
 
   // when click outside, close
@@ -235,37 +271,51 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   }, []);
 
   // add props
-  const [img, setImg] = useState(null);
-  const [imgsUrl, setImgsUrl] = useState([]);
+  const [img, setImg] = useStateWithPromise(null);
+  const [imgsUrl, setImgsUrl] = useStateWithPromise([]);
   const [uploading, setUploading] = useState(false);
   const addImage = () => {
     imageInputDom.current.click(); 
   };
-  const onImgChange = (e) => {
-    console.log('here');
-    console.log(Array.isArray(imgsUrl));
-    setImg(e.target.files[0]);
-    uploadImage();
+  const onImgChange = async (e) => {
+    console.log('call on change');
+    await setImg(e.target.files[0]);
+    // uploadImage();
   };
+  useEffect(() => {
+    if(img !== null) {
+      uploadImage();
+    }
+  }, [img]);
   const uploadImage = async () => {
-    if(img === null) return;
+    console.log('call uploadImage');
     // todo: loading spin
-    console.log(typeof imgsUrl);
-    setUploading(true);
-    console.log('img', img);
-    const formData = new FormData();
-    formData.append('file', img);
-    const res = await axios.post('http://localhost:3002/api/files/image', formData);
-    console.log(res.data.url);
-    // setImgsUrl(imgsUrl.concat(`http://localhost:3002/api${res.data.url}`));
-    // setImgsUrl([...imgsUrl, `http://localhost:3002/api${res.data.url}`]);
-    setImgsUrl(['123']);
-    console.log(imgsUrl); // []
-    console.log(res);
-    setUploading(false);
+    try {
+      setUploading(true);
+      console.log('img', img);
+      const formData = new FormData();
+      formData.append('file', img);
+      const res = await axios.post('http://localhost:3002/api/files/image', formData);
+      console.log('url', res.data.url);
+      await setImgsUrl(imgsUrl.concat(`http://localhost:3002/api${res.data.url}`));
+      console.log(imgsUrl); // []
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+  const onImgClick = (url) => {
+    return () => {
+      setImgsUrl(imgsUrl.filter(imgUrl => imgUrl !== url));
+    };
   };
 
   const peopleTag = () => {
+    console.log('imgsUrl', imgsUrl);
+    console.log('imgsUrl', typeof imgsUrl);
+    console.log('imgsUrl', Array.isArray(imgsUrl));
   };
 
   const hashTag = () => {
@@ -295,18 +345,21 @@ function PostWrite({ visible, setVisible, isModify, data }) {
         <div className="content">
           <textarea value={content} placeholder={placeholder} onChange={handleInputChange}/>
           <input className="hidden" ref={imageInputDom} type="file" accept='image/*' onChange={onImgChange} />
-          {/*}         {imgsUrl.length !== 0 &&
+          {imgsUrl.length !== 0 &&
           <div className="imgs">
-            {imgsUrl.maps(url => ( 
-              <div class="wrap-img" key={url}>
+            {imgsUrl.map(url => ( 
+              <div className="wrap-img btn" onClick={onImgClick(url)} key={url}>
+                <div className="wrap-icon">
+                  <FaRegTrashAlt size='50px' />
+                </div>
                 <img src={url} alt={url} />
               </div>
             ))}
             {uploading && 
-              <div class="wrap-img">Loading</div>
+              <div className="wrap-img">Loading</div>
             }
           </div>
-          }*/}
+          }
         </div>
         <div className="lower">
           <div className="wrap-text">

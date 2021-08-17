@@ -56,12 +56,14 @@ const GlobalStyle = createGlobalStyle`
     box-shadow: none;
 
     resize: none; /*remove the resize handle on the bottom right*/
+
+    padding: 0;
    }   
   .btn {
     cursor: pointer;
   }
   .hidden {
-    display: none;
+    display: none !important;
   }
 `;
 
