@@ -238,10 +238,12 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   };
   
   const closeWrite = async () => {
-    await setImg(null);
-    await setImgsUrl([]);
+    if(!isModify) {
+      setImgsUrl([]);
+      setContent('');
+    }
+    setImg(null);
     setVisible(false);
-    setContent('');
     setIsEmpty(true);
   };
 
@@ -265,6 +267,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   useEffect(() => {
     if(isModify) {
       setContent(data.content);
+      setImgsUrl(data.images);
       // todo: imgsurl
       setIsEmpty(false);
     }

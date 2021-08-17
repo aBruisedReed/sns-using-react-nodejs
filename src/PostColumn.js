@@ -327,6 +327,9 @@ function PostColumn() {
   const clickWrite = () => {
     setWriteToggle(true);
   };
+  const clickWriteWithImage = () => {
+    setWriteToggle(true);
+  }
   return (
     <PostColumnBlock>
       <div className="column-inner">
@@ -364,7 +367,7 @@ function PostTopWrite({ clickWrite, username, authState }) {
       <div className="lower">
         <div className="wrap-lower btn">
           <div className="wrap-icon"><IoMdImages size="32px" color={theme.palette.green}/></div>
-          <div className="text-lower">사진 첨부하기</div>
+          <div className="text-lower" onClick={clickWrite}>사진 첨부하기</div>
         </div>
       </div>
     </div>
