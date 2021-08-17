@@ -301,6 +301,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
       console.log(imgsUrl); // []
       console.log(res);
     } catch (err) {
+      alert('이미지 업로드 실패');
       console.log(err);
     } finally {
       setUploading(false);
