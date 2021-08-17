@@ -88,6 +88,7 @@ const PostWriteBlock = styled.div`
   // content
   .content {
     height: 200px;
+    flex-direction: column;
   }
   .content textarea {
     font-size: 24px;
@@ -177,19 +178,19 @@ function PostWrite({ visible, setVisible, isModify, data }) {
 
   const writePost = async () => {
     if(isModify) {
-      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId, authorImg }, 
+      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId, authorImg, imgsUrl }, 
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
     } else {
-      await axios.post('http://localhost:3002/api/posts', { author, content, authorId, authorImg },
+      await axios.post('http://localhost:3002/api/posts', { author, content, authorId, authorImg, imgsUrl },
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
     }
     await updateUser(authState, authDispatch);
     setContent('');
-    setIsEmpty(true);
+    // setIsEmpty(true);
     closeWrite();
     updateList();
   };
@@ -204,6 +205,8 @@ function PostWrite({ visible, setVisible, isModify, data }) {
     setVisible(false);
     setContent('');
     setIsEmpty(true);
+    setImg([]);
+    setImgsUrl([]);
   };
 
   // when click outside, close
@@ -226,23 +229,40 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   useEffect(() => {
     if(isModify) {
       setContent(data.content);
+      // todo: imgsurl
       setIsEmpty(false);
     }
   }, []);
 
   // add props
-  const [imgs, setImgs] = useState([]);
-  const handleImage = (e) => {
-    setImgs(e.target.files[0]);
-  };
+  const [img, setImg] = useState(null);
+  const [imgsUrl, setImgsUrl] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const addImage = () => {
+    imageInputDom.current.click(); 
+  };
+  const onImgChange = (e) => {
+    console.log('here');
+    console.log(Array.isArray(imgsUrl));
+    setImg(e.target.files[0]);
+    uploadImage();
   };
   const uploadImage = async () => {
-    console.log('img', imgs[0]);
+    if(img === null) return;
+    // todo: loading spin
+    console.log(typeof imgsUrl);
+    setUploading(true);
+    console.log('img', img);
     const formData = new FormData();
-    formData.append('file', imgs[0]);
-    const res = await axios.post('http://localhost:3002/api/file/image', formData);
+    formData.append('file', img);
+    const res = await axios.post('http://localhost:3002/api/files/image', formData);
+    console.log(res.data.url);
+    // setImgsUrl(imgsUrl.concat(`http://localhost:3002/api${res.data.url}`));
+    // setImgsUrl([...imgsUrl, `http://localhost:3002/api${res.data.url}`]);
+    setImgsUrl(['123']);
+    console.log(imgsUrl); // []
     console.log(res);
+    setUploading(false);
   };
 
   const peopleTag = () => {
@@ -274,9 +294,19 @@ function PostWrite({ visible, setVisible, isModify, data }) {
         </div>
         <div className="content">
           <textarea value={content} placeholder={placeholder} onChange={handleInputChange}/>
-          <div className="hidden">
-            <input ref={imageInputDom} type="file" accept='image/*' onChange={handleImage} />
+          <input className="hidden" ref={imageInputDom} type="file" accept='image/*' onChange={onImgChange} />
+          {/*}         {imgsUrl.length !== 0 &&
+          <div className="imgs">
+            {imgsUrl.maps(url => ( 
+              <div class="wrap-img" key={url}>
+                <img src={url} alt={url} />
+              </div>
+            ))}
+            {uploading && 
+              <div class="wrap-img">Loading</div>
+            }
           </div>
+          }*/}
         </div>
         <div className="lower">
           <div className="wrap-text">

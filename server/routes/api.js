@@ -97,6 +97,7 @@ router.post('/posts', function(req, res, next) {
   post.content = req.body.content;
   post.authorId = req.body.authorId;
   post.authorImg = req.body.authorImg;
+  post.images = req.body.imgsUrl;
   post.date = Date.now();
   post.like = 0;
   post.comments = [];
@@ -264,9 +265,13 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-router.post('/file/image', upload.single('file'), (req, res, next) => {
+router.post('/files/image', upload.single('file'), (req, res, next) => {
   console.log(req.file);
-  res.json({ url: `/img/${req.file.filename}` });
+  res.json({ url: `/files/image/${req.file.filename}` });
+});
+
+router.get('/files/image/:filename', (req, res) => {
+  res.sendFile(req.params.filename, { root: path.join(`${__dirname}/..`, 'uploads') });
 });
 
 module.exports = router;

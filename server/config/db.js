@@ -8,6 +8,7 @@ const Post = new moongoose.Schema({
   authorImg: String,
   picture: String,
   content: String,
+  images: Array,
   date: Date,
   like: Number,
   comments: Array
