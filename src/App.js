@@ -8,8 +8,6 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import PostColumn from './PostColumn';
 import moment from 'moment';
 import 'moment/locale/ko';
-// todo: del this
-import DevTool from './DevTool';
 import { ScrollToTop } from './CommonContext';
 
 
@@ -36,6 +34,11 @@ const GlobalStyle = createGlobalStyle`
   body {
     padding-top: 56px;
     background: #F0F2F5;
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   input {
     -webkit-appearance: none;
@@ -81,7 +84,6 @@ function App() {
               <PostColumn />
             </PostProvider>
           </UserProvider>
-          <DevTool />
         </ScrollToTop>
       </AuthProvider>
     </ThemeProvider>

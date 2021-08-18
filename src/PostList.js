@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { usePostState, usePostDispatch, getPost, getPostUser, getPostSearch } from './PostContext';
 import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
@@ -14,6 +14,7 @@ import { useAuthState, checkLogin, useAuthDispatch, updateUser, getUserImg } fro
 import { useHistory } from 'react-router-dom';
 import { Loading } from './CommonContext';
 import qs from 'qs';
+import PostImageGallery from './PostImageGallery';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -29,6 +30,7 @@ function PostList({ type, match, location }) {
   const keyword = location !== undefined ? qs.parse(location.search, {
     ignoreQueryPrefix: true
   }).keyword : null; 
+  const [itemCount, setItemCount] = useState(1);
 
   const fetch = () => {
     switch(type) {
@@ -45,6 +47,24 @@ function PostList({ type, match, location }) {
   useEffect(() => {
     fetch();
   }, [match, location]);
+
+  // infinite scroll
+  const ic = useRef(5);
+  const onScroll = e => { 
+    const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+    if(scrollTop+clientHeight >= scrollHeight) {
+      console.log('bottom');
+      console.log('ic', ic.current);
+      ic.current += 5;
+      setItemCount(ic.current);
+    }
+  };
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    }
+  }, []);
 
   // 외부에서 fetch 호출을 위한 함수
   updateList = () => {
@@ -63,7 +83,10 @@ function PostList({ type, match, location }) {
     <div className="post-list">
       {data.length !== 0 ?
           data.slice(0).reverse().map((item, idx) => {
-            return (<PostItem key={item._id} data={item} />);
+            if(idx > itemCount) { return null; }
+            else {
+              return (<PostItem key={item._id} data={item} />);
+            }
           })
           :
           <div className="post-item post empty">
@@ -71,6 +94,7 @@ function PostList({ type, match, location }) {
             <div className="to-back btn" onClick={goBack}>뒤로가기</div>
           </div>
       }
+      <div className="post-item post empty-bottom"></div>
     </div>
   );
 }
@@ -79,6 +103,7 @@ export { updateList };
 
 function PostItem(props) {
   // init using data from props
+  const [galleryVisible, setGalleryVisible] = useState(false);
   const { palette } = useContext(ThemeContext);
   const [data, setData] = useState(props.data);
   const [isMine, setIsMine] = useState(false); // 내가 글쓴이인지
@@ -139,6 +164,10 @@ function PostItem(props) {
     await axios.delete(`http://localhost:3002/api/posts/${data._id}`);
     updateList();
   };
+  //image
+  const showGallery = () => {
+    setGalleryVisible(true);
+  };
 
   // comment
   // todo: del isMyCmt에 따라서 버튼
@@ -198,20 +227,10 @@ function PostItem(props) {
       </div>
     );
   }) : null; 
-  // todo: 개행 처리, 아래 참고
-  // {this.props.data.content.split("\n").map((line) => { //this.props.data.content: 내용
-  //             return (
-  //               <span>
-  //                 {line}
-  //                 <br />
-  //               </span>
-  //             );
-  //           })}
   const showCmt = () => {
     setCmtVisible(true);
   };
 
-  // todo: 현재 사용자와 포스트 글쓴이가 같다면 ... 눌러서 수정, 삭제
   return (
     <>
       <div className="post-item post">
@@ -253,10 +272,39 @@ function PostItem(props) {
           }
         </div>
         <div className="middle">
-          <div className="content">{data.content}</div>
+          <div className="content">
+            {data.content.split("\n").map((line, idx) => {
+              return (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              );
+            })}
+          </div>
           <div className="people-tags"></div>
           <div className="hash-tags"></div>
-          <div className="imgs"></div>
+          {data.images.length !== 0 &&( 
+            data.images.length === 1 ? 
+              <div className="imgs" onClick={showGallery}>
+                <div className="wrap-img alone">
+                  <img src={data.images[0]} alt={data.images[0]}/>
+                </div>
+              </div> :
+              <div className="imgs" onClick={showGallery}>
+                <div className="wrap-img first">
+                  <img src={data.images[0]} alt={data.images[0]}/>
+                </div> 
+                {data.images.length > 2 && 
+                <div className="more">
+                  <div className="more-text">+{data.images.length-2}장</div>
+                </div>
+                }
+                <div className="wrap-img second">
+                  <img src={data.images[1]} alt={data.images[1]}/>
+                </div> 
+              </div>)
+          } 
         </div>
         <div className="lower">
           <div className="info">
@@ -310,6 +358,7 @@ function PostItem(props) {
         </div>
       </div>
       <PostWrite data={data} visible={modifyToggle} setVisible={setModifyToggle} isModify={true}></PostWrite>
+      <PostImageGallery imageUrls={data.images} visible={galleryVisible} setVisible={setGalleryVisible} />
     </>
   );
 }

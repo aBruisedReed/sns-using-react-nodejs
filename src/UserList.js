@@ -5,6 +5,7 @@ import { useUserState, useUserDispatch, getUser } from './UserContext';
 import { useAuthState } from './AuthContext';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
 import { Loading } from './CommonContext';
+import DevTool from './DevTool';
 
 const UserListDiv = styled.div`
   margin-top: 20px;
@@ -98,6 +99,7 @@ function UserList() {
       {data.map((user) => {
         return (<UserItem key={user.id} data={user} />)
       })}
+      <DevTool />
     </UserListDiv>
   );
 }

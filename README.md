@@ -75,11 +75,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 loading spin ok
 검색 ok
 빈 페이지(텅~) no 결과 뒤로가기 버튼 ok
-사진첨부
-해쉬태그, 인물태그
-unlimited scroll
+사진첨부 ok
+포스트 content 개행 구현 ok
+infinite scroll ok
 채팅
 알림(이벤트)
+thumbnail 구별로 최적화
+해쉬태그, 인물태그
 
 
 ### 개선 사항

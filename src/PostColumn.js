@@ -10,7 +10,6 @@ import { useAuthState, getName, getUserImg } from './AuthContext';
 const PostColumnBlock = styled.div`
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 30px;
 
   .column-inner {
     width: 648px;
@@ -114,7 +113,7 @@ const PostColumnBlock = styled.div`
   }
 
   //post list, item
-  .post-item .wrap-img {
+  .post-item .upper .wrap-img {
     justify-content: center;
     align-items: center;
     height: 40px;
@@ -134,7 +133,7 @@ const PostColumnBlock = styled.div`
     margin-left: 10px;
     justify-content: center;
   }
-  .post-item .wrap-author, .post-item .wrap-img {
+  .post-item .wrap-author, .post-item .upper .wrap-img {
     cursor: pointer;
   }
   .post-item .author {
@@ -184,8 +183,16 @@ const PostColumnBlock = styled.div`
     height: auto;
   }
   .post-item .middle {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    margin: 10px 0 0 0;
+    flex-direction: column;
+  }
+  .post-item .middle .content {
+    flex-direction: column;
+    margin: 0 16px 0 16px;
+    -webkit-user-select:all;
+    -moz-user-select:all;
+    -ms-user-select:all;
+    user-select:all
   }
   .post-item .lower { 
     flex-direction: column;
@@ -229,6 +236,53 @@ const PostColumnBlock = styled.div`
     justify-content: center;
     align-items: center;
   }
+  .post-item .imgs {
+    position: relative;
+    margin-top: 10px;
+  }
+  .post-item img {
+    z-index: 0;
+  }
+  .post-item .imgs *:hover {
+    cursor: pointer;
+  }
+  .post-item .imgs .wrap-img.alone {
+    width: 648px;
+    height: 648px;
+  }
+  .post-item .imgs .wrap-img.first {
+    width: 322px;
+    height: 322px;
+    margin-right: 4px;
+  }
+  .post-item .imgs .wrap-img.second {
+    width: 322px;
+    height: 322px;
+  }
+  .post-item .imgs .more {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 322px;
+    height: 322px;
+    background-color: gray;
+    opacity: 0.5;
+    z-index: 2;
+  }
+  .post-item .imgs .more .more-text {
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    opacity: 1;
+  }
+  .post-item .imgs .wrap-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   // cmt
   .post-item .cmt-section {
@@ -245,6 +299,10 @@ const PostColumnBlock = styled.div`
   .post-item .cmt-section .wrap-img {
     height: 32px;
     width: 32px;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid ${props=>props.theme.palette.lightGray}; 
+    cursor: pointer;
   }
   .post-item .cmt-section img {
     height: 32px;
@@ -291,6 +349,10 @@ const PostColumnBlock = styled.div`
   }
   .post-item .cmt-section .wrap-content .content {
     font-size: 15px;
+    -webkit-user-select:all;
+    -moz-user-select:all;
+    -ms-user-select:all;
+    user-select:all
   }
   .post-item .cmt-section .del-btn {
     margin-right: 10px;
@@ -317,6 +379,9 @@ const PostColumnBlock = styled.div`
     text-decoration: underline;
   }
 
+  .empty-bottom {
+    height: 100px;
+  }
 `;
 
 function PostColumn() {
@@ -327,9 +392,6 @@ function PostColumn() {
   const clickWrite = () => {
     setWriteToggle(true);
   };
-  const clickWriteWithImage = () => {
-    setWriteToggle(true);
-  }
   return (
     <PostColumnBlock>
       <div className="column-inner">

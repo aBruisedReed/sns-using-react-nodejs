@@ -43,6 +43,7 @@ const TopbarBlock = styled.div`
   background: ${props => props.theme.palette.white};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   justify-content: space-between;
+  z-index: 5;
 
   & * {
     display: flex;
@@ -59,7 +60,6 @@ const TopbarBlock = styled.div`
     justify-content: flex-start;
     align-items: center;
     margin-left: 10px;
-    z-index: 1;
   }
   .left .home {
     margin-right: 10px;

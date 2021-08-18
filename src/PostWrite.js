@@ -11,6 +11,7 @@ import { useStateWithPromise } from './CommonContext';
 
 const DarkBackground = styled.div`
   position: fixed;
+  z-index: 3;
   left: 0;
   top: 0;
   width: 100%;
@@ -283,7 +284,6 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   const onImgChange = async (e) => {
     console.log('call on change');
     await setImg(e.target.files[0]);
-    // uploadImage();
   };
   useEffect(() => {
     if(img !== null) {
