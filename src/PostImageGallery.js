@@ -42,7 +42,7 @@ const PostImageGalleryStyled = styled.div`
     right: 0;
   }
   .close {
-    right: 0;
+    right: 15px;
     top: 0;
   }
   .wrap-img {
