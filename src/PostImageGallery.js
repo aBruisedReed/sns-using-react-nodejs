@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { MdNavigateNext, MdNavigateBefore } from 'react-icons/md';
+import { VscChromeClose } from 'react-icons/vsc';
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -19,17 +20,30 @@ const PostImageGalleryStyled = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 660px;
   
   .btn {
     position: absolute;
     filter: drop-shadow(2px 3px 2px rgb(0 0 0 / 0.4));
     color: white;
+    border-radius: 40px;
+  }
+  .btn:hover {
+    color: lightgray;
+  }
+  .btn:active {
+    color: gray;
   }
   .prev {
     left: 0;
   }
   .next {
     right: 0;
+  }
+  .close {
+    right: 0;
+    top: 0;
   }
   .wrap-img {
     width: 500px;
@@ -91,6 +105,9 @@ function PostImageGallery({ visible, setVisible, imageUrls }) {
         </div>
         </> )
         }
+        <div className="close btn" onClick={closeGallery} >
+          <VscChromeClose size="40px" />
+        </div>
         <div className="wrap-img">
           <img src={imageUrls[cursor]} alt={imageUrls[cursor]} />
         </div>

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const api = require('./routes/api');
 const auth = require('./routes/auth');
+const chat = require('./routes/chat');
 const cors = require('cors');
 const sessionConfig = require('./config/session');
 const passportConfig = require('./config/passport');
@@ -22,11 +23,10 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 
-// /api routing -> api.js
+// route
 app.use('/api', api);
-
-// /auth routing -> auth.js
 app.use('/auth', auth);
+app.use('/chat', chat);
 
 // todo: del it
 app.get('/dev/session', function(req, res, next) {
