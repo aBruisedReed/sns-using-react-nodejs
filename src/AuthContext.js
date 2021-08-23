@@ -2,6 +2,7 @@ import React, { useReducer, useContext, createContext, useEffect } from 'react';
 import qs from 'qs';
 import jwt from 'jwt-decode';
 import axios from 'axios';
+import { initSocket } from './Chat';
 
 const initialState = {
   authenticated: false,
@@ -59,7 +60,11 @@ export function AuthInit({ location, history }) {
     // todo: validation
     const query = qs.parse(location.search, { ignoreQueryPrefix: true });
     if(!query.t) return null;
-    dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: jwt(query.t) });
+    const queryDecoded = jwt(query.t);
+    const socket = initSocket(queryDecoded.id, queryDecoded.name);
+    const userInfo = { ...queryDecoded, socket };
+    console.log(userInfo);
+    dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: userInfo });
     axios.defaults.headers.common['x-access-token'] = query.t;
     history.push('/');
   }, []);

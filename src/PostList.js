@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom';
 import { Loading } from './CommonContext';
 import qs from 'qs';
 import PostImageGallery from './PostImageGallery';
+import { useChatContext, chatOn, chatOff } from './Chat';
 
 
 // todo: 순서 역순에 무한 스크롤 구현
@@ -30,7 +31,7 @@ function PostList({ type, match, location }) {
   const keyword = location !== undefined ? qs.parse(location.search, {
     ignoreQueryPrefix: true
   }).keyword : null; 
-  const [itemCount, setItemCount] = useState(1);
+  const [itemCount, setItemCount] = useState(5);
 
   const fetch = () => {
     switch(type) {
@@ -46,6 +47,9 @@ function PostList({ type, match, location }) {
 
   useEffect(() => {
     fetch();
+    return () => {
+      dispatch({ type: 'GET_POST_CLEAN' });
+    }
   }, [match, location]);
 
   // infinite scroll
@@ -63,6 +67,7 @@ function PostList({ type, match, location }) {
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
+      dispatch({ type: 'GET_POST_CLEAN'});
     }
   }, []);
 
@@ -189,7 +194,11 @@ function PostItem(props) {
       updatePost();
     };
   }
+  // chat
+  const [chatState, chatDispatch] = useChatContext();
   const handleMsg = () => {
+    chatOn(chatDispatch, data.authorId);
+    console.log(chatState);
   }
   const CmtToUserPosts = (authorId) => {
     return () => {

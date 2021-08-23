@@ -6,6 +6,7 @@ import { useAuthState } from './AuthContext';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
 import { Loading } from './CommonContext';
 import DevTool from './DevTool';
+import { useChatContext, chatOn } from './Chat';
 
 const UserListDiv = styled.div`
   margin-top: 20px;
@@ -81,18 +82,21 @@ function UserList() {
   const { data, loading, error } = userState.userList;
   
   const fetch = () => {
-    getUser(dispatch); return;
+    getUser(dispatch); 
   };
 
   useEffect(() => {
     fetch();
+    return () => {
+      dispatch({ type: 'GET_USER_CLEAN'});
+    }
   }, []);
 
   if(loading || !data) {
     return <Loading />
   }
   if(error) {
-    return <div>Error occur{error}</div>
+    return <div>Error occur {error}</div>
   }
   return (
     <UserListDiv>
@@ -108,6 +112,7 @@ function UserItem({ data }) {
   const authState = useAuthState();
   const { id, name, image } = data;
   const history = useHistory();
+  const [state, dispatch] = useChatContext();
 
   const [isMe, setIsMe] = useState(false);
   useEffect(() => {
@@ -119,6 +124,14 @@ function UserItem({ data }) {
   const toUserPosts = () => {
     history.push(`/users/${id}`)
   };
+
+  const sendMsg = () => {
+    if(!authState.userInfo) {
+      alert('먼저 로그인을 해 주세요.');
+      return;
+    }
+    chatOn(dispatch, id);
+  }
 
   return (
     <div className="wrap-item">
@@ -139,7 +152,7 @@ function UserItem({ data }) {
       :
       <div className="chat btn">
         <div className="wrap-icon"><HiOutlineChatAlt2 /></div>
-        <div className="text-chat">메세지 보내기</div>
+        <div className="text-chat" onClick={sendMsg}>메세지 보내기</div>
       </div>
     }
     </div>

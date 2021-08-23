@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
 import axios from 'axios';
 
-const intialState = {
+const initialState = {
   userList: {
     loading: false,
     data: null,
@@ -28,6 +28,7 @@ const error = error => ({
 });
 
 function reducer(state, action) {
+  console.log(action);
   switch (action.type) {
     case 'GET_USER': 
       return {
@@ -44,6 +45,8 @@ function reducer(state, action) {
         ...state,
         userList: error(action.error) 
       };
+    case 'GET_USER_CLEAN':
+      return initialState;
     default: 
       throw new Error('Unhandled action type: '+action.type);
   };
@@ -54,7 +57,7 @@ const UserDispatchContext = createContext(null);
 
 // state, dispatch 두 가지 컨텍스트 사용을 위한 통합 provider component
 export function UserProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, intialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <UserStateContext.Provider value={state}>
       <UserDispatchContext.Provider value={dispatch}>

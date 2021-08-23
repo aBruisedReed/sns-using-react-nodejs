@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
+const http = require('http');
+const server = http.createServer(app);
 const api = require('./routes/api');
 const auth = require('./routes/auth');
-const chat = require('./routes/chat');
 const cors = require('cors');
 const sessionConfig = require('./config/session');
 const passportConfig = require('./config/passport');
+const chat = require('./module/chat');
 const morgan = require('morgan');
 require('dotenv').config({ path: `${__dirname}/../../.env` });
 
@@ -22,11 +24,12 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 
+// module
+chat(server);
 
 // route
 app.use('/api', api);
 app.use('/auth', auth);
-app.use('/chat', chat);
 
 // todo: del it
 app.get('/dev/session', function(req, res, next) {
@@ -35,7 +38,7 @@ app.get('/dev/session', function(req, res, next) {
 
 // app은 서버를 시작하며 3002 포트 연결을 listening
 const port = 3002;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`express is running on ${port}`)
 });
 

@@ -9,6 +9,7 @@ import PostColumn from './PostColumn';
 import moment from 'moment';
 import 'moment/locale/ko';
 import { ScrollToTop } from './CommonContext';
+import Chat, { ChatProvider } from './Chat';
 
 
 // todo: dark mode, light mode 구현 
@@ -76,15 +77,18 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <AuthProvider>
-        <ScrollToTop>
-          <Route path="/" exact={true} component={AuthInit} />
-          <Topbar />
-          <UserProvider>
-            <PostProvider>
-              <PostColumn />
-            </PostProvider>
-          </UserProvider>
-        </ScrollToTop>
+        <ChatProvider>
+          <ScrollToTop>
+            <Route path="/" exact={true} component={AuthInit} />
+            <Topbar />
+            <Chat />
+            <UserProvider>
+              <PostProvider>
+                <PostColumn />
+              </PostProvider>
+            </UserProvider>
+          </ScrollToTop>
+        </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
   );
