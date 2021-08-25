@@ -1,5 +1,5 @@
 const socketio = require('socket.io');
-const chatModel = require('../config/db').chatModel;
+const userModel = require('../config/db').userModel;
 
 const getTarget = (socketList, userId) => {
   const filtered = socketList.filter(socket => {
@@ -22,17 +22,12 @@ module.exports = server => {
   io.on('connection', (socket) => {
     console.log('connected');
     socket.on('init', (data) => {
-      console.log('init socket id', socket.id);
-      console.log('init', data);
+      console.log('init socket', socket.id, data);
       const socketInfo = {
         ...socket,
         userInfo: data
       }
       socketList = socketList.concat(socketInfo);
-    });
-
-    socket.on('client login', (data) => {
-      console.log(data);
     });
 
     socket.on('disconnect', function() {
@@ -41,14 +36,47 @@ module.exports = server => {
     });
 
     socket.on('send msg', (data) => {
+      console.log('socket list', socketList);
       console.log('send msg', data);
       const target = getTarget(socketList, data.toId);
-      console.log('target', target.id);
       if(!target) {
         // 상대가 접속 중이 아닐 때
         console.log('target is not found in socket list');
+      } else {
+        console.log('target', target.id);
+        data.isMe = false;
+        io.to(target.id).emit('receive msg' , data);
       }
-      io.to(target.id).emit('receive msg' , data);
+      data.isMe = true;
+      io.to(socket.id).emit('receive msg' , data);
+
+      // db 저장 
+      userModel.findOne({ id: data.fromId }, (err, user) => {
+        if(err) { throw err; }
+        else {
+          const foundIdx = user.chats.findIndex((chat) => {
+            if(chat.targetId === data.toId) return true;
+            else return false;
+          });
+          if(foundIdx === -1) {
+            user.chats = user.chats.concat({
+              targetId: data.toId,
+              msgs: [{
+                content: data.msg,
+                date: new Date()
+              }]
+            });
+          } else {
+            user.chats[foundIdx].msgs = user.chats[foundIdx].msgs.concat({
+              content: data.msg,
+              date: new Date()
+            })
+          }
+          user.save((err) => {
+            if(err) throw err;
+          })
+        }
+      });
     });
   });
 };

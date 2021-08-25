@@ -20,22 +20,16 @@ const User = new mongoose.Schema({
   id: String,
   name: String,
   image: String,
-  chats: Array,
+  chats: [{
+    targetId: String,
+    msgs: [{
+      content: String,
+      date: Date
+    }]
+  }],
   events: Array,
   posts: Array,
   likes: Array
 });
 const userModel = mongoose.model('User', User);
 exports.userModel = userModel;
-
-const Msg = new mongoose.Schema({
-  context: String,
-  data: Date
-});
-const Chat = new mongoose.Schema({
-  fromId: String,
-  toId: String,
-  msgs: [Msg]
-});
-const chatModel = mongoose.model('Chat', Chat);
-exports.chatModel = chatModel;

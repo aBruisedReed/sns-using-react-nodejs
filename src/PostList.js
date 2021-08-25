@@ -197,7 +197,11 @@ function PostItem(props) {
   // chat
   const [chatState, chatDispatch] = useChatContext();
   const handleMsg = () => {
-    chatOn(chatDispatch, data.authorId);
+    if(authState.userInfo === null) {
+      alert('먼저 로그인해주세요.');
+      return;
+    }
+    chatOn(chatDispatch, data.authorId, data.author, authState.userInfo.id);
     console.log(chatState);
   }
   const CmtToUserPosts = (authorId) => {

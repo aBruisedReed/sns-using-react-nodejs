@@ -6,6 +6,8 @@ const authMiddleWare = require('../middelwares/auth');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment');
+require('moment/locale/ko');
 
 // --------------------user--------------------
 // get users
@@ -26,6 +28,17 @@ router.get('/users/:id', function(req, res, next) {
       throw err;
     } else {
       res.json(data);
+    }
+  });
+});
+
+router.get('/users/:id/profile', function(req, res, next) {
+  const id = req.params.id;
+  userModel.find({ id: id }, function(err, data) {
+    if(err) {
+      throw err;
+    } else {
+      res.json(data[0].image);
     }
   });
 });
@@ -143,30 +156,19 @@ router.put('/posts/:id', function(req, res, next) {
 
 // del post
 router.use('/posts/:id', authMiddleWare);
-router.delete('/posts/:id', function(req, res, next) {
+router.delete('/posts/:id', async function(req, res, next) {
   const id = req.params.id;
-  postModel.findOne({ _id: id }, (err, post) => {
-    if(err) { throw err; } 
-    else {
-      userModel.findOne({ id: post.authorId }, (err, user) => {
-        if(err) { throw err; }
-        else {
-          user.posts = user.posts.filter(postId => postId != id);
-          user.save((err) => {
-            if(err) { throw err; }
-          });
-        }
-      });
-    }
-  });
+  try {
+    const post = await postModel.findOne({ _id: id });
+    const user = await userModel.findOne({ id: post.authorId });
+    user.posts = user.posts.filter(postId => postId != id);
+    user.save();
 
-  postModel.deleteOne({ _id: id }, function(err) {
-    if(err) {
-      throw err;
-    } else {
-      res.json({ status: 'SUCCESS' });
-    }
-  })
+    await postModel.deleteOne({ _id: id });
+    res.json({ status: 'SUCCESS' });
+  } catch (err) {
+    throw err;
+  }
 });
 
 // like post
@@ -229,20 +231,20 @@ router.post('/posts/:id/comments', function(req, res, next) {
 // del comment at post
 router.delete('/posts/:id/comments/:idx', function(req, res, next) {
   const { id, idx } = req.params;
-    postModel.findOne({ _id: id }, function(err, post) {
-      if(err) {
-        throw err;
-      } else {
-        post.comments = post.comments.filter((comment, index) => index != idx);
-        post.save(function(err) {
-          if(err) { 
-            throw err;
-          } else { 
-            res.json({ status: 'SUCCESS' });
-          }
-        })
-      }
-    });
+  postModel.findOne({ _id: id }, function(err, post) {
+    if(err) {
+      throw err;
+    } else {
+      post.comments = post.comments.filter((comment, index) => index != idx);
+      post.save(function(err) {
+        if(err) { 
+          throw err;
+        } else { 
+          res.json({ status: 'SUCCESS' });
+        }
+      })
+    }
+  });
 });
 
 // --------------------file--------------------
@@ -272,6 +274,47 @@ router.post('/files/image', upload.single('file'), (req, res, next) => {
 
 router.get('/files/image/:filename', (req, res) => {
   res.sendFile(req.params.filename, { root: path.join(`${__dirname}/..`, 'uploads') });
+});
+
+// --------------------chat--------------------
+router.get('/users/:id/chat/:targetId', async (req, res, next) => {
+  const { id, targetId } = req.params;
+  try {
+    const user = await userModel.findOne({ id: id });
+    const target = await userModel.findOne({ id: targetId });
+    const userLogs = user.chats.find((chat) => {
+      if(chat.targetId === targetId) return true;
+      else return false;
+    }).msgs;
+    const targetLogs = target.chats.find((chat) => {
+      if(chat.targetId === id) return true;
+      else return false;
+    }).msgs;
+    const usersParsed = userLogs.map(log => {
+      return {
+        isMe: true,
+        msg: log.content,
+        date: moment(log.date).fromNow(),
+        realDate: log.date
+      }
+    })
+    const targetParsed = targetLogs.map(log => {
+      return {
+        isMe: false,
+        msg: log.content,
+        date: moment(log.date).fromNow(),
+        realDate: log.date
+      }
+    })
+    const result = usersParsed.concat(targetParsed);
+    result.sort((a, b) => {
+      return new Date(a.realDate) - new Date(b.realDate);
+    });
+    res.json(result);
+  } catch (err) {
+    res.json([]);
+    // throw err;
+  }
 });
 
 module.exports = router;
