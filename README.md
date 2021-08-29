@@ -78,8 +78,7 @@ loading spin ok
 사진첨부 ok
 포스트 content 개행 구현 ok
 infinite scroll ok
-채팅
-upscroll refresh
+채팅 ok
 알림(이벤트) using socketio
 thumbnail 구별로 최적화
 해쉬태그, 인물태그

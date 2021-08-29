@@ -124,7 +124,6 @@ function Chat() {
   const [state, dispatch] = useChatContext();
   const middleDom = useRef();
   useEffect(() => {
-    console.log('uf1');
     if(state.visible) {
       scrollToBottom();
     }
@@ -132,25 +131,17 @@ function Chat() {
     chatLogRef.current = state.chatLog;
   }, [state.visible, state.chatLog]);
   useEffect(() => {
-    console.log('uf2');
     if(!authState.userInfo) return;
     setSocket(authState.userInfo.socket);
   }, [authState])
   useEffect(() => {
-    console.log('uf3');
     if(!socket) return;
-    console.log('uf3-1');
     socket.on('receive msg', (data) => {
-      console.log('receive');
       const receive = {
         isMe: data.isMe,
         msg: data.msg,
         date: moment(data.date).fromNow()
       };
-      console.log('chatLog', chatLog);
-      console.log('chatLogRef', chatLogRef.current);
-      console.log('state.chatLog', state.chatLog);
-      console.log('receive', receive);
       const newChatLog = chatLogRef.current.concat(receive);
       chatLogRef.current = newChatLog;
       dispatch({ type: 'CHAT_UPDATE', chatLog: newChatLog });
@@ -165,22 +156,12 @@ function Chat() {
     setMsg(e.target.value);
   };
   const sendMsg = (e) => {
-    console.log('socket', socket);
     if(e.key !== 'Enter' || e.target.value === '' || !socket) return;
-    console.log('socket', socket);
     socket.emit('send msg', {
       fromId: authState.userInfo.id,
       toId: state.id,
       msg: msg
     });
-    // const sent = {
-    //   isMe: true,
-    //   msg: msg,
-    //   date: moment(new Date()).fromNow()
-    // };
-    // console.log(chatLog);
-    // setChatLog(chatLog.concat(sent));
-    // chatLogRef.current = state.chatLog;
     setMsg('');
     scrollToBottom();
   };
@@ -237,7 +218,6 @@ function Chat() {
   return (
     <ChatDiv>
       <div className="upper">
-        {console.log(state.name,'sn')}
         <div className="who-text">{state.name}</div>
         <div className="close btn" onClick={() => chatOff(dispatch)}>
           <VscClose />
@@ -255,7 +235,6 @@ function Chat() {
                 :
                 <div className="msg left" key={idx}>
                   <div className="wrap-profile">
-                    {console.log('profile in div', state.profile)}
                     <img src={state.profile} alt='profile' />
                   </div>
                   <div className="wrap-text left">{log.msg}</div>
@@ -324,15 +303,6 @@ export async function chatOn(dispatch, id, name, myId) {
 }
 export function chatOff(dispatch) {
   dispatch({ type: 'CHAT_OFF' });
-}
-
-export function initSocket(userId, userName) {
-  const socket = socketio.connect('http://localhost:3002');
-  socket.emit('init', {
-    userId,
-    userName
-  });
-  return socket;
 }
 
 export default Chat;

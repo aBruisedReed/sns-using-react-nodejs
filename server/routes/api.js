@@ -32,13 +32,23 @@ router.get('/users/:id', function(req, res, next) {
   });
 });
 
+router.get('/users/:id/name', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await userModel.findOne({ id: id });
+    res.json(user.name);
+  } catch (err) {
+    throw err;
+  }
+}) ;
+
 router.get('/users/:id/profile', function(req, res, next) {
   const id = req.params.id;
-  userModel.find({ id: id }, function(err, data) {
+  userModel.findOne({ id: id }, function(err, data) {
     if(err) {
       throw err;
     } else {
-      res.json(data[0].image);
+      res.json(data.image);
     }
   });
 });
@@ -277,6 +287,76 @@ router.get('/files/image/:filename', (req, res) => {
 });
 
 // --------------------chat--------------------
+const getRecentMsg = async (id, targetId) => {
+  try {
+    const user = await userModel.findOne({ id: id });
+    const target = await userModel.findOne({ id: targetId });
+    // console.log(user, target);
+    const userRecent = user.chats.find((chat) => {
+      if(chat.targetId === targetId) return true;
+      else return false;
+    });
+    const targetRecent = target.chats.find((chat) => {
+      if(chat.targetId === id) return true;
+      else return false;
+    });
+    // console.log('2222',targetRecent, userRecent);
+    // if((!userRecent || !targetRecent)) return null;
+    if(!userRecent && targetRecent) {
+      const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
+      return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
+    } else if (userRecent && !targetRecent) {
+      const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
+      return { content: userRecentMsgs.content, date: userRecentMsgs.date }
+    } else {
+      const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
+      const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
+      const compare = new Date(targetRecentMsgs.date) - (new Date(userRecentMsgs.date));
+      if(compare) {
+        return { content: userRecentMsgs.content, date: userRecentMsgs.date }
+      } else {
+        return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
+      }
+    }
+    // console.log('3333',targetRecentMsgs, userRecentMsgs);
+  } catch (err) {
+    throw err;
+  } finally {
+  }
+};
+
+router.get('/users/:id/chat', async (req, res) => {
+  const { id } = req.params;
+  try {
+
+    const user = await userModel.findOne({ id: id });
+    let targetList = [];
+    console.log('user.chats', user.chats);
+    const targets =  user.chats.map(async (chat) => {
+      return {
+        ...( await userModel.findOne({ id: chat.targetId }))._doc,
+        recent: await getRecentMsg(id, chat.targetId)
+      }
+    });
+    Promise.all(targets)
+      .then(targets => {
+        console.log('targets',targets);
+        const result = targets.map(target => {
+          return {
+            id: target.id,
+            img: target.image,
+            who: target.name,
+            recent: target.recent.content,
+            date: moment(target.recent.date).fromNow()
+          }
+        });
+        console.log('result', result);
+        res.json(result);
+      });
+  } catch (err) {
+    throw err;
+  }
+});
 router.get('/users/:id/chat/:targetId', async (req, res, next) => {
   const { id, targetId } = req.params;
   try {

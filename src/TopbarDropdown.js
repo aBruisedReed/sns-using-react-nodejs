@@ -1,12 +1,16 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { Loading } from './CommonContext';
 import { BsPencilSquare, BsDot } from 'react-icons/bs';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { BiExit } from 'react-icons/bi';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled, { ThemeContext }  from 'styled-components';
 import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
-import { useAuthDispatch, useAuthState, getUserImg } from './AuthContext';
+import { useAuthDispatch, useAuthState, getUserImg, updateUser } from './AuthContext';
+import { chatOn, useChatContext } from './Chat';
+import moment from 'moment';
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -15,6 +19,8 @@ const TopbarDropdownBlock = styled.div`
   display: flex;
   flex-direction: column;
   width: 320px;
+  max-height: 500px;
+  overflow: auto;
   background: ${props => props.theme.palette.white};
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
@@ -23,6 +29,10 @@ const TopbarDropdownBlock = styled.div`
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .btn:hover {
     background-color: ${props=>props.theme.palette.lightGray};
@@ -184,24 +194,6 @@ const TopbarDropdownBlock = styled.div`
     color: ${props=>props.theme.palette.gray};
   }
 `;
-const testChats = [
-  {
-    _id: '114',
-    img: 'asdf', 
-    who: '홍길동',
-    recent: '어디야?',
-    date: '2021-07-23 19:35', // todo: 현재시 기준 10분 전 같은 함수 제작
-    unread: true
-  },
-  {
-    _id: '2345t2dsf',
-    img: 'asdf', // == id로 이미지
-    who: '홍길동',
-    recent: '어디야?',
-    date: '2021-07-23 19:35', // todo: 현재시 기준 10분 전 같은 함수 제작
-    unread: false
-  }
-];
 const testNotis = [
   {
     _id: '24gcgsd',
@@ -262,10 +254,22 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
     setMenuNumber(99);
   };
   
-  // todo: 메세지 수가 많을 경우 모두 보기 버튼 추가해서 페이지 넘기기
+  // todo: 많으면 스크롤
   const theme = useContext(ThemeContext);
-  const chatsData = testChats; //test
+  const [chats, setChats] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const fetchChats = async () => {
+    setChatLoading(true);
+    await updateUser(authState, authDispatch);
+    const resChats = await axios.get(`http://localhost:3002/api/users/${authState.userInfo.id}/chat`);
+    setChats(resChats.data);
+    setChatLoading(false);
+  };
   const notisData = testNotis;
+  useEffect(() => {
+    if(authState.userInfo === null || menuNumber !== 0) return;
+    fetchChats();
+  }, [menuNumber]);
 
   const [darkMode, setDarkMode] = useState(false);
   const handleDarkMode = () => {
@@ -274,11 +278,23 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const clickDarkMode = () => {
     setDarkMode(!darkMode);
   };
+  const location = useLocation();
+  useEffect(() => { // when tab chaged, close menu
+    closeMenu();
+  }, [location])
   const history = useHistory();
   const viewMyPosts = () => {
     history.push(`/users/${authState.userInfo.id}`);
   }
   const userImg = getUserImg(authState);
+
+  const [chatState, chatDispatch] = useChatContext();
+  const chatClicked = (targetId, targetName) => {
+    return () => {
+      chatOn(chatDispatch, targetId, targetName, authState.userInfo.id);
+      closeMenu();
+    };
+  };
   
   switch(menuNumber) {
     case 0:
@@ -292,18 +308,18 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
               </div>
             </div>
             <div className="chats">
-              {chatsData !== null ?
-                chatsData.map(data => (
-                  <div className="chat btn" key={data._id}>
+              {chats && chats.length !== 0 && !chatLoading ?
+                chats.slice(0).reverse().map((data, idx) => (
+                  <div className="chat btn" key={idx} onClick={chatClicked(data.id, data.who)}>
                     <div className="profile" >
-                      <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                      <img src={data.img} alt="profile" />
                     </div>
                     <div className="info">
                       <div className="who">{data.who}</div>
                       <div className="info-lower">
                         <div className="recent">{data.recent}</div>
                         &nbsp;·&nbsp;
-                        <div className="date">30분 전</div>
+                        <div className="date">{data.date}</div>
                       </div>
                     </div>
                     <div className="unread-dot">
@@ -313,7 +329,12 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                     </div>
                   </div>
                 )) :
-                <div className="empty-page">채팅이 없습니다.</div>
+                <>
+                {chatLoading ? 
+                  <Loading />
+                :
+                <div className="empty-page">채팅이 없습니다.</div>}
+                </>
               }
             </div>
           </TopbarDropdownBlock>
@@ -329,8 +350,8 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
             </div>
             <div className="notis">
               {notisData !== null ?
-                  notisData.map(data => (
-                    <div className="noti btn" key={data._id}>
+                  notisData.map((data, idx) => (
+                    <div className="noti btn" key={idx}>
                       <div className="profile">
                         <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
                       </div>

@@ -2,7 +2,7 @@ import React, { useReducer, useContext, createContext, useEffect } from 'react';
 import qs from 'qs';
 import jwt from 'jwt-decode';
 import axios from 'axios';
-import { initSocket } from './Chat';
+import { SocketContext } from './socket';
 
 const initialState = {
   authenticated: false,
@@ -56,19 +56,25 @@ export function useAuthDispatch() {
 
 export function AuthInit({ location, history }) {
   const dispatch = useAuthDispatch();
+  const socket = useContext(SocketContext);
+  console.log('here socket', socket);
   useEffect(() => {
-    // todo: validation
     const query = qs.parse(location.search, { ignoreQueryPrefix: true });
     if(!query.t) return null;
     const queryDecoded = jwt(query.t);
-    const socket = initSocket(queryDecoded.id, queryDecoded.name);
+    socket.emit('init', {
+      userId: queryDecoded.id,
+      userName: queryDecoded.name
+    });
+    console.log('socket',)
     const userInfo = { ...queryDecoded, socket };
-    console.log(userInfo);
+    console.log('ui', userInfo);
     dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: userInfo });
     axios.defaults.headers.common['x-access-token'] = query.t;
     history.push('/');
   }, []);
   return null;
+
 }
 
 export async function updateUser(state, dispatch) {

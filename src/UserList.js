@@ -130,7 +130,7 @@ function UserItem({ data }) {
       alert('먼저 로그인을 해 주세요.');
       return;
     }
-    chatOn(dispatch, id, name);
+    chatOn(dispatch, id, name, authState.userInfo.id);
   }
 
   return (

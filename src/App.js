@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom';
 import { PostProvider } from './PostContext';
 import { UserProvider } from './UserContext';
 import { AuthProvider, AuthInit } from './AuthContext';
+import { SocketContext, socket } from './socket';
 import Topbar from './Topbar';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import PostColumn from './PostColumn';
@@ -67,7 +68,8 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
   .hidden {
-    display: none !important;
+    display: none !important
+    ;
   }
 `;
 
@@ -76,20 +78,22 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <AuthProvider>
-        <ChatProvider>
-          <ScrollToTop>
-            <Route path="/" exact={true} component={AuthInit} />
-            <Topbar />
-            <Chat />
-            <UserProvider>
-              <PostProvider>
-                <PostColumn />
-              </PostProvider>
-            </UserProvider>
-          </ScrollToTop>
-        </ChatProvider>
-      </AuthProvider>
+      <SocketContext.Provider value={socket}>
+        <AuthProvider>
+          <ChatProvider>
+            <ScrollToTop>
+              <Route path="/" exact={true} component={AuthInit} />
+              <Topbar />
+              <Chat />
+              <UserProvider>
+                <PostProvider>
+                  <PostColumn />
+                </PostProvider>
+              </UserProvider>
+            </ScrollToTop>
+          </ChatProvider>
+        </AuthProvider>
+        </SocketContext.Provider>
     </ThemeProvider>
   );
 }
