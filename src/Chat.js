@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, createContext, useReducer, useConte
 import axios from 'axios';
 import styled from 'styled-components';
 import { useAuthState } from './AuthContext';
-import socketio from 'socket.io-client';
+import { SocketContext } from './socket';
 import { VscClose } from 'react-icons/vsc'; 
 import moment from 'moment';
 
@@ -117,8 +117,7 @@ const ChatDiv = styled.div`
 
 function Chat() {
   const authState = useAuthState();
-  const [socket, setSocket] = useState(null);
-  const [chatLog, setChatLog] = useState([]);
+  const socket = useContext(SocketContext);
   const chatLogRef = useRef([]);
   const [msg, setMsg] = useState('');
   const [state, dispatch] = useChatContext();
@@ -127,15 +126,9 @@ function Chat() {
     if(state.visible) {
       scrollToBottom();
     }
-    setChatLog(state.chatLog);
     chatLogRef.current = state.chatLog;
   }, [state.visible, state.chatLog]);
   useEffect(() => {
-    if(!authState.userInfo) return;
-    setSocket(authState.userInfo.socket);
-  }, [authState])
-  useEffect(() => {
-    if(!socket) return;
     socket.on('receive msg', (data) => {
       const receive = {
         isMe: data.isMe,
@@ -145,9 +138,9 @@ function Chat() {
       const newChatLog = chatLogRef.current.concat(receive);
       chatLogRef.current = newChatLog;
       dispatch({ type: 'CHAT_UPDATE', chatLog: newChatLog });
+      scrollToBottom();
     });
-    scrollToBottom();
-  }, [socket]);
+  }, []);
   const scrollToBottom = () => {
     if(!middleDom.current) return;
     middleDom.current.scrollTop = middleDom.current.scrollHeight;
@@ -156,6 +149,7 @@ function Chat() {
     setMsg(e.target.value);
   };
   const sendMsg = (e) => {
+    console.log('socket',socket);
     if(e.key !== 'Enter' || e.target.value === '' || !socket) return;
     socket.emit('send msg', {
       fromId: authState.userInfo.id,
@@ -297,8 +291,10 @@ export function useChatContext() {
 }
 
 export async function chatOn(dispatch, id, name, myId) {
+  console.log('call chatOn');
   const profile = await axios.get(`http://localhost:3002/api/users/${id}/profile`);
   const chatLog = await axios.get(`http://localhost:3002/api/users/${myId}/chat/${id}`)
+  console.log('chatLog', chatLog);
   dispatch({ type: 'CHAT_ON', id: id, name: name, profile: profile.data, chatLog: chatLog.data, visible: true });
 }
 export function chatOff(dispatch) {

@@ -317,7 +317,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                     <div className="info">
                       <div className="who">{data.who}</div>
                       <div className="info-lower">
-                        <div className="recent">{data.recent}</div>
+                        <div className="recent">{data.recent.length > 10 ? data.recent.slice(0, 9).concat('...') : data.recent}</div>
                         &nbsp;·&nbsp;
                         <div className="date">{data.date}</div>
                       </div>

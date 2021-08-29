@@ -358,40 +358,56 @@ router.get('/users/:id/chat', async (req, res) => {
   }
 });
 router.get('/users/:id/chat/:targetId', async (req, res, next) => {
+  console.log('chat to chat call');
   const { id, targetId } = req.params;
   try {
     const user = await userModel.findOne({ id: id });
     const target = await userModel.findOne({ id: targetId });
-    const userLogs = user.chats.find((chat) => {
+    const userLogsFind = user.chats.find((chat) => {
       if(chat.targetId === targetId) return true;
       else return false;
-    }).msgs;
-    const targetLogs = target.chats.find((chat) => {
+    });
+    const targetLogsFind = target.chats.find((chat) => {
       if(chat.targetId === id) return true;
       else return false;
-    }).msgs;
-    const usersParsed = userLogs.map(log => {
+    });
+    console.log(userLogsFind, targetLogsFind);
+    const userLogs = userLogsFind ? userLogsFind.msgs : null;
+    const targetLogs = targetLogsFind ? targetLogsFind.msgs : null;
+    const usersParsed = userLogs ? userLogs.map(log => {
       return {
         isMe: true,
         msg: log.content,
         date: moment(log.date).fromNow(),
         realDate: log.date
       }
-    })
-    const targetParsed = targetLogs.map(log => {
+    }) : null;
+    const targetParsed = targetLogs ? targetLogs.map(log => {
       return {
         isMe: false,
         msg: log.content,
         date: moment(log.date).fromNow(),
         realDate: log.date
       }
-    })
-    const result = usersParsed.concat(targetParsed);
+    }) : null;
+    let result = null;
+    if(!usersParsed || !targetParsed) {
+      if(usersParsed) {
+        result = usersParsed;
+      } else if(targetParsed) {
+        result = targetParsed;
+      }
+    } else  {
+      result = usersParsed.concat(targetParsed);
+    }
+    console.log('result',result);
     result.sort((a, b) => {
       return new Date(a.realDate) - new Date(b.realDate);
     });
+    console.log('result',result);
     res.json(result);
   } catch (err) {
+    console.log(err);
     res.json([]);
     // throw err;
   }

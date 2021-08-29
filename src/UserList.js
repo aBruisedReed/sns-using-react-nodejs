@@ -126,6 +126,7 @@ function UserItem({ data }) {
   };
 
   const sendMsg = () => {
+    console.log('clicked sendmsg');
     if(!authState.userInfo) {
       alert('먼저 로그인을 해 주세요.');
       return;
