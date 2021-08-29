@@ -20,6 +20,7 @@ const TopbarDropdownBlock = styled.div`
   flex-direction: column;
   width: 320px;
   max-height: 500px;
+  z-index: 5;
   overflow: auto;
   background: ${props => props.theme.palette.white};
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -303,9 +304,6 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
           <TopbarDropdownBlock ref={menuDom} >
             <div className="header"> 
               <h1>채팅</h1>
-              <div data-tip="새 메세지" className="new-msg btn">
-                <BsPencilSquare size="16px" />
-              </div>
             </div>
             <div className="chats">
               {chats && chats.length !== 0 && !chatLoading ?
