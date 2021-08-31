@@ -57,8 +57,6 @@ function PostList({ type, match, location }) {
   const onScroll = e => { 
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
     if(scrollTop+clientHeight >= scrollHeight) {
-      console.log('bottom');
-      console.log('ic', ic.current);
       ic.current += 5;
       setItemCount(ic.current);
     }
