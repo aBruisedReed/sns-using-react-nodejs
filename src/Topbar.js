@@ -312,14 +312,6 @@ function Topbar() {
   useEffect(() => {
     socket.on('receive noti', () => {
       console.log('call receive noti');
-        // user.events = user.events.concat({
-        //   id: data.toId,
-        //   name: data.name,
-        //   img: data.img,
-        //   type: data.type,
-        //   postId: data.postId,
-        //   date: data.date
-        // });
       setNoti(true);
     });
     socket.on('receive msg', (data) => {

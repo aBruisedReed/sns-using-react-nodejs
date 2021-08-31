@@ -135,7 +135,12 @@ function Chat() {
         msg: data.msg,
         date: moment(data.date).fromNow()
       };
-      const newChatLog = chatLogRef.current.concat(receive);
+      let newChatLog = [];
+      if(chatLogRef.current !== null) {
+        newChatLog = chatLogRef.current.concat(receive);
+      } else {
+        newChatLog = [receive];
+      }
       chatLogRef.current = newChatLog;
       dispatch({ type: 'CHAT_UPDATE', chatLog: newChatLog });
       scrollToBottom();
@@ -221,6 +226,7 @@ function Chat() {
         {
           state.chatLog && state.chatLog.length ? 
             state.chatLog.map((log, idx) => 
+              log.msg === 'd#u#m#m#y' ? null :
               log.isMe ?
                 <div className="msg right" key={idx}>
                   <div className="wrap-date">{log.date}</div>

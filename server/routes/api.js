@@ -67,9 +67,6 @@ router.get('/users/:id/posts', (req, res, next) => {
 // --------------------post--------------------
 // get posts 
 router.get('/posts', async (req, res, next) => {
-  // 싹 지우기 todo: for dev
-  // postModel.deleteMany({}, (err) => { if(err) throw err });
-  // userModel.deleteMany({}, (err) => { if(err) throw err });
   const keyword = req.query.keyword;
   try {
     if(keyword) {
@@ -300,24 +297,18 @@ const getRecentMsg = async (id, targetId) => {
     });
     // if((!userRecent || !targetRecent)) return null;
     if(!userRecent && targetRecent) {
-      console.log('1 case');
       const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
       return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
     } else if (userRecent && !targetRecent) {
-      console.log('2 case');
       const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
       return { content: userRecentMsgs.content, date: userRecentMsgs.date }
     } else {
-      console.log('3 case');
       const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
       const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
       const compare = (new Date(targetRecentMsgs.date)) - (new Date(userRecentMsgs.date));
-      console.log('compare',compare);
       if(compare < 0) {
-        console.log('3-1',userRecentMsgs, targetRecentMsgs);
         return { content: userRecentMsgs.content, date: userRecentMsgs.date }
       } else {
-        console.log('3-2',userRecentMsgs, targetRecentMsgs);
         return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
       }
     }
@@ -330,7 +321,6 @@ const getRecentMsg = async (id, targetId) => {
 router.get('/users/:id/chat', async (req, res) => {
   const { id } = req.params;
   try {
-
     const user = await userModel.findOne({ id: id });
     let targetList = [];
     const targets =  user.chats.map(async (chat) => {
@@ -400,9 +390,11 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
     } else  {
       result = usersParsed.concat(targetParsed);
     }
-    result.sort((a, b) => {
-      return new Date(a.realDate) - new Date(b.realDate);
-    });
+    if(result) {
+      result.sort((a, b) => {
+        return new Date(a.realDate) - new Date(b.realDate);
+      });
+    } 
     res.json(result);
   } catch (err) {
     console.log(err);
@@ -410,7 +402,6 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
     // throw err;
   }
 });
-
 // --------------------notification--------------------
 router.get('/users/:id/noti', async (req, res) => {
   try {
@@ -421,4 +412,21 @@ router.get('/users/:id/noti', async (req, res) => {
     throw err;
   }
 });
+
+// --------------------dev--------------------
+router.get('/dev/', async (req, res) => {
+  try {
+    postModel.deleteMany({}, (err) => { if(err) throw err });
+    userModel.deleteMany({}, (err) => { if(err) throw err });
+    // const users = await userModel.find({});
+    // console.log(users);
+    // // for (let i = 0, len = users.length; i < len; i++) {
+    // //   users[i].chats = [];
+    // // }
+    // // await users.save();
+    res.json({result: 'sucess'});
+  } catch (e) {
+    /* handle error */
+  }
+})
 module.exports = router;

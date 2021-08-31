@@ -79,7 +79,7 @@ loading spin ok
 포스트 content 개행 구현 ok
 infinite scroll ok
 채팅 ok
-알림(이벤트) using socketio
+알림(이벤트) using socketio ok
 thumbnail 구별로 최적화
 해쉬태그, 인물태그
 
@@ -89,4 +89,5 @@ styled-componets를 사용 함에도 부모 컴포넌트에서 css를 정의해�
 일단 만들고 MVC 패턴으로 분할 (참고: https://m.blog.naver.com/sejun3278/221575009683)
 resposive web (https://www.devpools.kr/2018/04/27/2018-04-27-Responsive-Web%EC%9D%84-%EC%9C%84%ED%95%B4-%EA%B0%9C%EB%B0%9C%EC%9E%90%EA%B0%80-%EA%BC%AD-%EC%95%8C%EC%95%84%EC%95%BC-%ED%95%98%EB%8A%94-%EA%B8%B0%EC%88%A0%EB%93%A4/)
 evnets, noti, chat, msg 등 naming이 일정치 않았다.
+메세지 데이터를 각각 관리가 아니라 room 개념으로 할 걸 그랬다.
 

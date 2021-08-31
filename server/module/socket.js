@@ -37,7 +37,6 @@ module.exports = server => {
 
     // chat
     socket.on('send msg', (data) => {
-      console.log('socket list', socketList);
       console.log('send msg', data);
       const target = getTarget(socketList, data.toId);
       if(!target) {
@@ -53,6 +52,28 @@ module.exports = server => {
       io.to(socket.id).emit('receive msg' , data);
 
       // db 저장 
+      userModel.findOne({ id: data.toId }, (err, user) => {
+        if(err) { throw err; }
+        else {
+          const foundIdx = user.chats.findIndex((chat) => {
+            if(chat.targetId === data.fromId) return true;
+            else return false;
+          });
+          if(foundIdx === -1) {
+            user.chats = user.chats.concat({
+              targetId: data.fromId,
+              msgs: [{
+                content: 'd#u#m#m#y',
+                date: new Date()-100
+              }]
+            });
+          } 
+          user.save((err) => {
+            if(err) throw err;
+          })
+        }
+      });
+
       userModel.findOne({ id: data.fromId }, (err, user) => {
         if(err) { throw err; }
         else {
