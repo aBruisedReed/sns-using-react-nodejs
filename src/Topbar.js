@@ -322,9 +322,11 @@ function Topbar() {
         // });
       setNoti(true);
     });
-    socket.on('receive msg', () => {
+    socket.on('receive msg', (data) => {
       console.log('call receive msg in topbar');
-      setChatNoti(true);
+      if(!data.isMe) {
+        setChatNoti(true);
+      }
     });
   }, []);
 
