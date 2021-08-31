@@ -317,12 +317,12 @@ function PostWrite({ visible, setVisible, isModify, data }) {
   };
 
   const peopleTag = () => {
-    console.log('imgsUrl', imgsUrl);
-    console.log('imgsUrl', typeof imgsUrl);
-    console.log('imgsUrl', Array.isArray(imgsUrl));
+    // todo: 구현
+    console.log('미구현');
   };
 
   const hashTag = () => {
+    console.log('미구현');
   };
   
   if(!visible) return null;

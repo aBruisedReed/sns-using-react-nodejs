@@ -390,6 +390,7 @@ function PostColumn() {
   const username = getName(authState);
 
   const clickWrite = () => {
+    console.log('call click write');
     setWriteToggle(true);
   };
   return (
@@ -427,9 +428,9 @@ function PostTopWrite({ clickWrite, username, authState }) {
         </div>
       </div>
       <div className="lower">
-        <div className="wrap-lower btn">
+        <div className="wrap-lower btn" onClick={clickWrite}>
           <div className="wrap-icon"><IoMdImages size="32px" color={theme.palette.green}/></div>
-          <div className="text-lower" onClick={clickWrite}>사진 첨부하기</div>
+          <div className="text-lower">사진 첨부하기</div>
         </div>
       </div>
     </div>
