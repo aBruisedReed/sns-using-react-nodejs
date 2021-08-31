@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { updateList } from './PostList';
 import styled, { css, keyframes, ThemeContext } from 'styled-components';
-import { BsSearch, BsPeopleFill, BsPeople } from 'react-icons/bs';
+import { BsSearch, BsPeopleFill, BsPeople, BsDot } from 'react-icons/bs';
 import { AiFillHome, AiOutlineHome } from 'react-icons/ai';
 import { FiMessageSquare } from 'react-icons/fi';
 import { MdNotificationsNone } from 'react-icons/md';
@@ -11,6 +11,7 @@ import ReactTooltip from 'react-tooltip';
 import TopbarDropdown from './TopbarDropdown';
 import { FcGoogle } from 'react-icons/fc';
 import { useAuthState } from './AuthContext';
+import { SocketContext } from './socket';
 
 // todo: home, home-tab 눌렀을 때 리스트 재 로드
 // todo: loading 시 로딩 아이콘 
@@ -128,6 +129,7 @@ const TopbarBlock = styled.div`
     margin-right: 10px;
   }
   .right .btn {
+    position: relative;
     background: ${props=>props.theme.palette.lightGray};
     width: 40px;
     height: 40px;
@@ -141,6 +143,13 @@ const TopbarBlock = styled.div`
   }
   .right .btn:active {
     background: ${props=>props.theme.palette.lightDarkDarkGray};
+  }
+  .right .btn .wrap-dot {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: -16px;
+    right: -16px;
   }
 
   .right .login-google {
@@ -275,6 +284,7 @@ function Topbar() {
       return;
     }
     setActiveRightMenu(0);
+    setChatNoti(false);
   };
   const clickNoti = () => {
     if(activeRightMenu === 1) {
@@ -282,6 +292,7 @@ function Topbar() {
       return;
     }
     setActiveRightMenu(1);
+    setNoti(false);
   };
   const clickMenu = () => {
     if(activeRightMenu === 2) {
@@ -293,6 +304,29 @@ function Topbar() {
   const closeMenu = () => { 
     setActiveRightMenu(99);
   };
+
+  // notification 처리
+  const [noti, setNoti] = useState(false); // noti표시 render 여부
+  const [chatNoti, setChatNoti] = useState(false);
+  const socket = useContext(SocketContext);
+  useEffect(() => {
+    socket.on('receive noti', () => {
+      console.log('call receive noti');
+        // user.events = user.events.concat({
+        //   id: data.toId,
+        //   name: data.name,
+        //   img: data.img,
+        //   type: data.type,
+        //   postId: data.postId,
+        //   date: data.date
+        // });
+      setNoti(true);
+    });
+    socket.on('receive msg', () => {
+      console.log('call receive msg in topbar');
+      setChatNoti(true);
+    });
+  }, []);
 
   return (
     <>
@@ -322,9 +356,11 @@ function Topbar() {
             <div className="menu-wrap">
               <div onClick={clickMsg} data-tip="채팅" className="message btn">
                 <FiMessageSquare color={getRightMenuColor(activeRightMenu).msg} size="20px"></FiMessageSquare>
+                {chatNoti && <div className="wrap-dot"><BsDot size="40px" color="red" /></div>}
               </div>
               <div onClick={clickNoti} data-tip="알림" className="notification btn">
                 <MdNotificationsNone color={getRightMenuColor(activeRightMenu).noti} size="20px"></MdNotificationsNone>
+                {noti && <div className="wrap-dot"><BsDot size="40px" color="red" /></div>}
               </div>
               <div onClick={clickMenu} data-tip="계정" className="menu btn">
                 <BiDownArrow color={getRightMenuColor(activeRightMenu).menu} size="20px"></BiDownArrow>

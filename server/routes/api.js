@@ -278,7 +278,6 @@ const upload = multer({
 });
 
 router.post('/files/image', upload.single('file'), (req, res, next) => {
-  console.log(req.file);
   res.json({ url: `/files/image/${req.file.filename}` });
 });
 
@@ -291,7 +290,6 @@ const getRecentMsg = async (id, targetId) => {
   try {
     const user = await userModel.findOne({ id: id });
     const target = await userModel.findOne({ id: targetId });
-    // console.log(user, target);
     const userRecent = user.chats.find((chat) => {
       if(chat.targetId === targetId) return true;
       else return false;
@@ -300,25 +298,29 @@ const getRecentMsg = async (id, targetId) => {
       if(chat.targetId === id) return true;
       else return false;
     });
-    // console.log('2222',targetRecent, userRecent);
     // if((!userRecent || !targetRecent)) return null;
     if(!userRecent && targetRecent) {
+      console.log('1 case');
       const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
       return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
     } else if (userRecent && !targetRecent) {
+      console.log('2 case');
       const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
       return { content: userRecentMsgs.content, date: userRecentMsgs.date }
     } else {
+      console.log('3 case');
       const targetRecentMsgs = targetRecent.msgs[targetRecent.msgs.length-1];
       const userRecentMsgs = userRecent.msgs[userRecent.msgs.length-1];
-      const compare = new Date(targetRecentMsgs.date) - (new Date(userRecentMsgs.date));
-      if(compare) {
+      const compare = (new Date(targetRecentMsgs.date)) - (new Date(userRecentMsgs.date));
+      console.log('compare',compare);
+      if(compare < 0) {
+        console.log('3-1',userRecentMsgs, targetRecentMsgs);
         return { content: userRecentMsgs.content, date: userRecentMsgs.date }
       } else {
+        console.log('3-2',userRecentMsgs, targetRecentMsgs);
         return { content: targetRecentMsgs.content, date: targetRecentMsgs.date }
       }
     }
-    // console.log('3333',targetRecentMsgs, userRecentMsgs);
   } catch (err) {
     throw err;
   } finally {
@@ -331,7 +333,6 @@ router.get('/users/:id/chat', async (req, res) => {
 
     const user = await userModel.findOne({ id: id });
     let targetList = [];
-    console.log('user.chats', user.chats);
     const targets =  user.chats.map(async (chat) => {
       return {
         ...( await userModel.findOne({ id: chat.targetId }))._doc,
@@ -340,7 +341,6 @@ router.get('/users/:id/chat', async (req, res) => {
     });
     Promise.all(targets)
       .then(targets => {
-        console.log('targets',targets);
         const result = targets.map(target => {
           return {
             id: target.id,
@@ -350,7 +350,6 @@ router.get('/users/:id/chat', async (req, res) => {
             date: moment(target.recent.date).fromNow()
           }
         });
-        console.log('result', result);
         res.json(result);
       });
   } catch (err) {
@@ -358,7 +357,6 @@ router.get('/users/:id/chat', async (req, res) => {
   }
 });
 router.get('/users/:id/chat/:targetId', async (req, res, next) => {
-  console.log('chat to chat call');
   const { id, targetId } = req.params;
   try {
     const user = await userModel.findOne({ id: id });
@@ -371,7 +369,6 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
       if(chat.targetId === id) return true;
       else return false;
     });
-    console.log(userLogsFind, targetLogsFind);
     const userLogs = userLogsFind ? userLogsFind.msgs : null;
     const targetLogs = targetLogsFind ? targetLogsFind.msgs : null;
     const usersParsed = userLogs ? userLogs.map(log => {
@@ -400,11 +397,9 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
     } else  {
       result = usersParsed.concat(targetParsed);
     }
-    console.log('result',result);
     result.sort((a, b) => {
       return new Date(a.realDate) - new Date(b.realDate);
     });
-    console.log('result',result);
     res.json(result);
   } catch (err) {
     console.log(err);
@@ -413,4 +408,14 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
   }
 });
 
+// --------------------notification--------------------
+router.get('/users/:id/noti', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findOne({ id: id });
+    res.json(user.events);
+  } catch (err) {
+    throw err;
+  }
+});
 module.exports = router;

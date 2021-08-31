@@ -7,7 +7,7 @@ const auth = require('./routes/auth');
 const cors = require('cors');
 const sessionConfig = require('./config/session');
 const passportConfig = require('./config/passport');
-const chat = require('./module/chat');
+const socket = require('./module/socket');
 const morgan = require('morgan');
 require('dotenv').config({ path: `${__dirname}/../../.env` });
 
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // module
-chat(server);
+socket(server);
 
 // route
 app.use('/api', api);

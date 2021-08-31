@@ -27,7 +27,14 @@ const User = new mongoose.Schema({
       date: Date
     }]
   }],
-  events: Array,
+  events: [{
+    id: String,
+    name: String,
+    img: String,
+    type: String,
+    postId: String,
+    date: Date
+  }],
   posts: Array,
   likes: Array
 });

@@ -90,7 +90,6 @@ const TopbarDropdownBlock = styled.div`
   .info {
     flex-direction: column;
     justify-content: center;
-    width: 200px;
   }
 
   .info .who {
@@ -320,11 +319,6 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                         <div className="date">{data.date}</div>
                       </div>
                     </div>
-                    <div className="unread-dot">
-                      {data.unread && 
-                      <BsDot size="30px" color={theme.palette.red}/>
-                      }
-                    </div>
                   </div>
                 )) :
                 <>
@@ -364,11 +358,6 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
                         <div className="info-lower">
                           <div className="date">30분 전</div>
                         </div>
-                      </div>
-                      <div className="unread-dot">
-                        {data.unread && 
-                        <BsDot size="30px" color={theme.palette.red}/>
-                        }
                       </div>
                     </div>
                   )) :
