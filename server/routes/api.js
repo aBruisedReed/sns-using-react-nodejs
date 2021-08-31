@@ -347,9 +347,12 @@ router.get('/users/:id/chat', async (req, res) => {
             img: target.image,
             who: target.name,
             recent: target.recent.content,
-            date: moment(target.recent.date).fromNow()
+            realDate: target.recent.date,
+            date: moment(target.recent.date).fromNow(),
           }
-        });
+        }).sort((a, b) => {
+          return new Date(a.realDate) - new Date(b.realDate);
+        }); 
         res.json(result);
       });
   } catch (err) {
