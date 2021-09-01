@@ -8,6 +8,8 @@ import { FaUserTag, FaHashtag, FaRegTrashAlt } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
 import { useAuthState, getName, getUserId, useAuthDispatch, updateUser, getUserImg } from './AuthContext';
 import { useStateWithPromise } from './CommonContext';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const DarkBackground = styled.div`
   position: fixed;
@@ -215,12 +217,12 @@ function PostWrite({ visible, setVisible, isModify, data }) {
 
   const writePost = async () => {
     if(isModify) {
-      await axios.put(`http://localhost:3002/api/posts/${data._id}`, { author, content, authorId, authorImg, imgsUrl }, 
+      await axios.put(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}`, { author, content, authorId, authorImg, imgsUrl }, 
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
     } else {
-      await axios.post('http://localhost:3002/api/posts', { author, content, authorId, authorImg, imgsUrl },
+      await axios.post('${process.env.REACT_APP_SERVER_URL}/api/posts', { author, content, authorId, authorImg, imgsUrl },
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
@@ -298,9 +300,9 @@ function PostWrite({ visible, setVisible, isModify, data }) {
       console.log('img', img);
       const formData = new FormData();
       formData.append('file', img);
-      const res = await axios.post('http://localhost:3002/api/files/image', formData);
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/files/image`, formData);
       console.log('url', res.data.url);
-      await setImgsUrl(imgsUrl.concat(`http://localhost:3002/api${res.data.url}`));
+      await setImgsUrl(imgsUrl.concat(`${process.env.REACT_APP_SERVER_URL}/api${res.data.url}`));
       console.log(imgsUrl); // []
       console.log(res);
     } catch (err) {

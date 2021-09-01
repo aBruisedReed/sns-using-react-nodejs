@@ -1,5 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
 import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const initialState = {
   postList: {
@@ -87,7 +89,7 @@ export function usePostDispatch() {
 export async function getPost(dispatch) {
   dispatch({ type: 'GET_POST' });
   try {
-    const res = await axios.get('http://localhost:3002/api/posts');
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/posts`);
     dispatch({ type: 'GET_POST_SUC', data: res.data });
   } catch (e) {
     dispatch({ type: 'GET_POST_ERR', error: e });
@@ -97,7 +99,7 @@ export async function getPost(dispatch) {
 export async function getPostUser(dispatch, id) {
   dispatch({ type: 'GET_POST' });
   try {
-    const res = await axios.get(`http://localhost:3002/api/users/${id}/posts`);
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${id}/posts`);
     dispatch({ type: 'GET_POST_SUC', data: res.data });
   } catch (e) {
     dispatch({ type: 'GET_POST_ERR', error: e });
@@ -107,7 +109,7 @@ export async function getPostUser(dispatch, id) {
 export async function getPostSearch(dispatch, keyword) {
   dispatch({ type: 'GET_POST' });
   try {
-    const res = await axios.get(`http://localhost:3002/api/posts?keyword=${keyword}`);
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/posts?keyword=${keyword}`);
     dispatch({ type: 'GET_POST_SUC', data: res.data });
   } catch (e) {
     dispatch({ type: 'GET_POST_ERR', error: e });

@@ -1,5 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
 import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const initialState = {
   userList: {
@@ -87,7 +89,7 @@ export function useUserDispatch() {
 export async function getUser(dispatch) {
   dispatch({ type: 'GET_USER' });
   try {
-    const res = await axios.get('http://localhost:3002/api/users');
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users`);
     dispatch({ type: 'GET_USER_SUC', data: res.data });
   } catch (e) {
     dispatch({ type: 'GET_USER_ERR', error: e });

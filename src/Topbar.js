@@ -12,6 +12,8 @@ import TopbarDropdown from './TopbarDropdown';
 import { FcGoogle } from 'react-icons/fc';
 import { useAuthState } from './AuthContext';
 import { SocketContext } from './socket';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // todo: home, home-tab 눌렀을 때 리스트 재 로드
 // todo: loading 시 로딩 아이콘 
@@ -247,7 +249,7 @@ function Topbar() {
   const [checkLogin, setCheckLogin] = useState(false);
 
   const clickLogin = () => {
-    window.open(`http://localhost:3002/auth/login/google`, "_self");
+    window.open(`${process.env.REACT_APP_SERVER_URL}/auth/login/google`, "_self");
   };
 
   const [activeRightMenu, setActiveRightMenu] = useState(99);

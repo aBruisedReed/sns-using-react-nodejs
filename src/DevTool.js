@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const DevToolBlock = styled.div`
   display: absolute;
@@ -36,9 +38,9 @@ const UsersInfo = [{
 function DevTool() {
   const handleLogin = (info) => {
     return async () => {
-      const res = await axios.post(`http://localhost:3002/auth/login/dev`, {user: info });
+      const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/login/dev`, {user: info });
       console.log(res.data);
-      window.open(`http://localhost:3000?t=${res.data}`, "_self");
+      window.open(`${process.env.REACT_APP_CLIENT_URL}?t=${res.data}`, "_self");
     }
   }
   return (

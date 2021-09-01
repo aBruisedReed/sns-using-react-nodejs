@@ -16,7 +16,8 @@ import { Loading } from './CommonContext';
 import qs from 'qs';
 import PostImageGallery from './PostImageGallery';
 import { useChatContext, chatOn, chatOff } from './Chat';
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 // todo: 순서 역순에 무한 스크롤 구현
 
@@ -130,7 +131,7 @@ function PostItem(props) {
 
   // update post(when comment state changed)
   const updatePost = async () => {
-    const res = await axios.get(`http://localhost:3002/api/posts/${data._id}`);
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}`);
     setData(res.data[0]);
   };
 
@@ -153,7 +154,7 @@ function PostItem(props) {
   const handleLike = async () => {
     if(checkLogin(authState)) {
       setIsLike(!isLike);
-      await axios.put(`http://localhost:3002/api/posts/${data._id}/like`, { isLike }, authHeader);
+      await axios.put(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}/like`, { isLike }, authHeader);
       await updateUser(authState, authDispatch);
       updatePost();
     } else {
@@ -164,7 +165,7 @@ function PostItem(props) {
 
   // delete button
   const handleDel = async () => {
-    await axios.delete(`http://localhost:3002/api/posts/${data._id}`);
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}`);
     updateList();
   };
   //image
@@ -182,13 +183,13 @@ function PostItem(props) {
   const cmtSubmit = async (e) => {
     if(e.key !== 'Enter' || e.target.value === '') return;
     // todo: current user 동적으로 
-    await axios.post(`http://localhost:3002/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id, authorImg: authState.userInfo.image });
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id, authorImg: authState.userInfo.image });
     setCmt('');
     updatePost();
   };
   const handleDelCmt = (idx) => {
     return async () => {
-      await axios.delete(`http://localhost:3002/api/posts/${data._id}/comments/${idx}`);
+      await axios.delete(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}/comments/${idx}`);
       updatePost();
     };
   }

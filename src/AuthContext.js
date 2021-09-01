@@ -3,6 +3,8 @@ import qs from 'qs';
 import jwt from 'jwt-decode';
 import axios from 'axios';
 import { SocketContext } from './socket';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const initialState = {
   authenticated: false,
@@ -78,7 +80,7 @@ export function AuthInit({ location, history }) {
 }
 
 export async function updateUser(state, dispatch) {
-  const res = await axios.get(`http://localhost:3002/api/users/${state.userInfo.id}`);
+  const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${state.userInfo.id}`);
   dispatch({ type: 'UPDATE', userInfo: res.data[0] });
 }
 

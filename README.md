@@ -90,4 +90,5 @@ styled-componets를 사용 함에도 부모 컴포넌트에서 css를 정의해�
 resposive web (https://www.devpools.kr/2018/04/27/2018-04-27-Responsive-Web%EC%9D%84-%EC%9C%84%ED%95%B4-%EA%B0%9C%EB%B0%9C%EC%9E%90%EA%B0%80-%EA%BC%AD-%EC%95%8C%EC%95%84%EC%95%BC-%ED%95%98%EB%8A%94-%EA%B8%B0%EC%88%A0%EB%93%A4/)
 evnets, noti, chat, msg 등 naming이 일정치 않았다.
 메세지 데이터를 각각 관리가 아니라 room 개념으로 할 걸 그랬다.
+commit message 작성에 일관성이 없었다. feat, fix 등의 타입 분류가 필요해보인다. 그리고 이건 간단한 프로젝트이긴 하지만 main 브랜치 하나만 사용했다.
 

@@ -10,7 +10,9 @@ import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
 import { useAuthDispatch, useAuthState, getUserImg, updateUser } from './AuthContext';
 import { chatOn, useChatContext } from './Chat';
-import moment from 'moment';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const TopbarDropdownBlock = styled.div`
   position: fixed;
@@ -250,7 +252,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const authDispatch = useAuthDispatch();
   const clickLogout = () => {
     authDispatch({ type: 'LOGOUT' })
-    window.open(`http://localhost:3000/`, "_self");
+    window.open(process.env.REACT_APP_CLIENT_URL, "_self");
     setMenuNumber(99);
   };
   
@@ -261,7 +263,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
   const fetchChats = async () => {
     setChatLoading(true);
     await updateUser(authState, authDispatch);
-    const resChats = await axios.get(`http://localhost:3002/api/users/${authState.userInfo.id}/chat`);
+    const resChats = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${authState.userInfo.id}/chat`);
     setChats(resChats.data);
     setChatLoading(false);
   };

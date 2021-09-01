@@ -5,6 +5,8 @@ import { useAuthState } from './AuthContext';
 import { SocketContext } from './socket';
 import { VscClose } from 'react-icons/vsc'; 
 import moment from 'moment';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const ChatDiv = styled.div`
   position: fixed;
@@ -298,8 +300,8 @@ export function useChatContext() {
 
 export async function chatOn(dispatch, id, name, myId) {
   console.log('call chatOn');
-  const profile = await axios.get(`http://localhost:3002/api/users/${id}/profile`);
-  const chatLog = await axios.get(`http://localhost:3002/api/users/${myId}/chat/${id}`)
+  const profile = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${id}/profile`);
+  const chatLog = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${myId}/chat/${id}`)
   console.log('chatLog', chatLog);
   dispatch({ type: 'CHAT_ON', id: id, name: name, profile: profile.data, chatLog: chatLog.data, visible: true });
 }
