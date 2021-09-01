@@ -407,6 +407,7 @@ router.get('/users/:id/noti', async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userModel.findOne({ id: id });
+    console.log(user.events, 'userevents');
     res.json(user.events);
   } catch (err) {
     throw err;
@@ -414,7 +415,7 @@ router.get('/users/:id/noti', async (req, res) => {
 });
 
 // --------------------dev--------------------
-router.get('/dev/', async (req, res) => {
+router.get('/dev', async (req, res) => {
   try {
     postModel.deleteMany({}, (err) => { if(err) throw err });
     userModel.deleteMany({}, (err) => { if(err) throw err });

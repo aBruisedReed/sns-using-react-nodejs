@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { usePostState, usePostDispatch, getPost, getPostUser, getPostSearch } from './PostContext';
+import { usePostState, usePostDispatch, getPost, getPostUser, getPostSearch, getPostOne } from './PostContext';
 import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
@@ -42,6 +42,8 @@ function PostList({ type, match, location }) {
         getPostUser(dispatch, id); return;
       case 'search':
         getPostSearch(dispatch, keyword); return;
+      case 'one':
+        getPostOne(dispatch, id); return;
       default: return;
     }
   };

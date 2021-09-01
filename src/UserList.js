@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { SocketContext } from './socket';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useUserState, useUserDispatch, getUser } from './UserContext';
@@ -81,6 +82,7 @@ function UserList() {
   const userState = useUserState();
   const dispatch = useUserDispatch();
   const { data, loading, error } = userState.userList;
+  const socket = useContext(SocketContext);
   
   const fetch = () => {
     getUser(dispatch); 
@@ -102,14 +104,14 @@ function UserList() {
   return (
     <UserListDiv>
       {data.map((user) => {
-        return (<UserItem key={user.id} data={user} />)
+        return (<UserItem key={user.id} data={user} socket={socket}/>)
       })}
       <DevTool />
     </UserListDiv>
   );
 }
 
-function UserItem({ data }) {
+function UserItem({ data, socket }) {
   const authState = useAuthState();
   const { id, name, image } = data;
   const history = useHistory();
@@ -121,6 +123,18 @@ function UserItem({ data }) {
       setIsMe(true);
     }
   }, []);
+
+  const sendNoti = (socket, toId, postId, type) => {
+    const data = {
+      fromId: authState.userInfo.id,
+      toId: toId,
+      img: authState.userInfo.img,
+      type: type,
+      postId: postId,
+      date: new Date()
+    };
+    socket.emit('send noti', data);
+  };
 
   const toUserPosts = () => {
     history.push(`/users/${id}`)

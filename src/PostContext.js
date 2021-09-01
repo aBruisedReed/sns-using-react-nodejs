@@ -115,3 +115,13 @@ export async function getPostSearch(dispatch, keyword) {
     dispatch({ type: 'GET_POST_ERR', error: e });
   }
 }
+
+export async function getPostOne(dispatch, id) {
+  dispatch({ type: 'GET_POST' });
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/posts/${id}`);
+    dispatch({ type: 'GET_POST_SUC', data: res.data });
+  } catch (e) {
+    dispatch({ type: 'GET_POST_ERR', error: e });
+  }
+}

@@ -10,6 +10,7 @@ import ReactTooltip from 'react-tooltip';
 import Switch from 'react-switch';
 import { useAuthDispatch, useAuthState, getUserImg, updateUser } from './AuthContext';
 import { chatOn, useChatContext } from './Chat';
+import moment from 'moment';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -260,18 +261,32 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
   // todo: 많으면 스크롤
   const theme = useContext(ThemeContext);
   const [chats, setChats] = useState([]);
-  const [chatLoading, setChatLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // fetch chat
   const fetchChats = async () => {
-    setChatLoading(true);
+    setLoading(true);
     await updateUser(authState, authDispatch);
     const resChats = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${authState.userInfo.id}/chat`);
     setChats(resChats.data);
-    setChatLoading(false);
+    setLoading(false);
   };
-  const notisData = testNotis;
+  // fetch noti
+  const [noti, setNoti] = useState([]);
+  const fetchNoti = async () => {
+    setLoading(true);
+    await updateUser(authState, authDispatch);
+    const resNoti = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${authState.userInfo.id}/noti`);
+    setNoti(resNoti.data);
+    setLoading(false);
+  };
+  // update
   useEffect(() => {
-    if(authState.userInfo === null || menuNumber !== 0) return;
-    fetchChats();
+    if(authState.userInfo === null) return;
+    switch(menuNumber) {
+      case 0: fetchChats(); return;
+      case 1: fetchNoti(); return;
+      default: return;
+    }
   }, [menuNumber]);
 
   const handleDarkMode = () => {
@@ -301,6 +316,12 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
       closeMenu();
     };
   };
+
+  const toPosts = (id) => {
+    return () => {
+      history.push(`/posts/${id}`)
+    }
+  };
   
   switch(menuNumber) {
     case 0:
@@ -311,7 +332,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
               <h1>채팅</h1>
             </div>
             <div className="chats">
-              {chats && chats.length !== 0 && !chatLoading ?
+              {chats && chats.length !== 0 && !loading ?
                 chats.slice(0).reverse().map((data, idx) => (
                   <div className="chat btn" key={idx} onClick={chatClicked(data.id, data.who)}>
                     <div className="profile" >
@@ -328,7 +349,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
                   </div>
                 )) :
                 <>
-                {chatLoading ? 
+                {loading ? 
                   <Loading />
                 :
                 <div className="empty-page">채팅이 없습니다.</div>}
@@ -347,27 +368,32 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
               <h1>알림</h1>
             </div>
             <div className="notis">
-              {notisData !== null ?
-                  notisData.map((data, idx) => (
-                    <div className="noti btn" key={idx}>
+              {noti && noti.length !== 0 && !loading ?
+                  noti.map((data, idx) => (
+                    <div className="noti btn" key={idx} onClick={toPosts(data.postId)}>
                       <div className="profile">
-                        <img src={process.env.PUBLIC_URL + '/person-icon.png'} alt="profile" />
+                        <img src={data.img} alt="profile" />
                       </div>
                       <div className="info">
                         <div className="noti-detail">
-                          <span>{data.who}</span>님이 {
-                            data.what === 'cmt' ?
+                          <span>{data.name}</span>님이 {
+                            data.type === 'cmt' ?
                               '게시물에 댓글을 달았습니다.' :
                               '게시물에 좋아요를 눌렀습니다.'
                           }
                         </div>
                         <div className="info-lower">
-                          <div className="date">30분 전</div>
+                          <div className="date">{moment(data.date).fromNow()}</div>
                         </div>
                       </div>
                     </div>
                   )) :
-                  <div className="empty-page">알림이 없습니다.</div>
+                <>
+                  {loading ? 
+                    <Loading />
+                    :
+                    <div className="empty-page">알림이 없습니다.</div>}
+                </>
               }
             </div>
           </TopbarDropdownBlock>

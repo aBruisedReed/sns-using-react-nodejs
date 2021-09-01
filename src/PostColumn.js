@@ -405,6 +405,7 @@ function PostColumn() {
         <Route path="/users/:id/" exact={true} render={({ match }) => <PostList match={match} type={'user'} />} />
         <Route path="/users" exact={true} component={UserList}/>
         <Route path="/posts" exact={true} render={({ location }) => <PostList location={location} type={'search'} />} />
+        <Route path="/posts/:id" exact={true} render={({ match }) => <PostList match={match} type={'one'} />} />
       </div>
     </PostColumnBlock>
   );
