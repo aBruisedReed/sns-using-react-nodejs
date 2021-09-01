@@ -25,6 +25,7 @@ const TopbarDropdownBlock = styled.div`
   z-index: 5;
   overflow: auto;
   background: ${props => props.theme.palette.white};
+  color: ${props => props.theme.palette.black};
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   border-top-left-radius: 0px;
@@ -225,7 +226,7 @@ const testNotis = [
     unread: false
   }
 ];
-function TopbarDropdown({ menu, closeMenu, topbarDom }) {
+function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
   const authState = useAuthState();
   // when outside of dropdown click, close menu
   const [menuNumber, setMenuNumber] = useState(menu);
@@ -273,12 +274,15 @@ function TopbarDropdown({ menu, closeMenu, topbarDom }) {
     fetchChats();
   }, [menuNumber]);
 
-  const [darkMode, setDarkMode] = useState(false);
   const handleDarkMode = () => {
     setDarkMode(!darkMode);
+    console.log('h',darkMode);
+    console.log('theme', theme);
   };
   const clickDarkMode = () => {
     setDarkMode(!darkMode);
+    console.log('theme', theme);
+    console.log('c',darkMode);
   };
   const location = useLocation();
   useEffect(() => { // when tab chaged, close menu

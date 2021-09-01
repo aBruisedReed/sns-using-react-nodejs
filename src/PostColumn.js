@@ -10,6 +10,7 @@ import { useAuthState, getName, getUserImg } from './AuthContext';
 const PostColumnBlock = styled.div`
   width: 100%;
   min-height: 100vh;
+  color: ${props=>props.theme.palette.black};
 
   .column-inner {
     width: 648px;

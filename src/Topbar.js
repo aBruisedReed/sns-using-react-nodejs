@@ -47,6 +47,7 @@ const TopbarBlock = styled.div`
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   justify-content: space-between;
   z-index: 5;
+  color: ${props=>props.theme.palette.black};
 
   & * {
     display: flex;
@@ -99,6 +100,7 @@ const TopbarBlock = styled.div`
   .left .search-wrap input {
     width:100%;
     height: 24px;
+    color: ${props=>props.theme.palette.black};
   }
   .left .search-btn {
   }
@@ -162,7 +164,7 @@ const TopbarBlock = styled.div`
   }
 `;
 
-function Topbar() {
+function Topbar({ darkMode, setDarkMode }) {
   const theme = useContext(ThemeContext);
   const history = useHistory();
   const topbarDom = useRef();
@@ -373,7 +375,7 @@ function Topbar() {
           }
         </div>
       </TopbarBlock>
-      <TopbarDropdown closeMenu={closeMenu} menu={activeRightMenu} topbarDom={topbarDom} />
+      <TopbarDropdown darkMode={darkMode} setDarkMode={setDarkMode} closeMenu={closeMenu} menu={activeRightMenu} topbarDom={topbarDom} />
       <ReactTooltip delayShow={200}/>
     </>
   );

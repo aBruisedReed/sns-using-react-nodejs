@@ -14,6 +14,7 @@ const UserListDiv = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  color: ${props=>props.theme.palette.black};
 
   & * {
     display: flex;
@@ -40,7 +41,7 @@ const UserListDiv = styled.div`
     object-fit: cover;
   }
   .wrap-name {
-    // justify-content: center;
+    // color: ${props => props.theme.palette.black};
   }
   .name {
     font-size: 17px;
