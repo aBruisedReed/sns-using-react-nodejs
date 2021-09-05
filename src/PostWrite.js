@@ -99,6 +99,8 @@ const PostWriteBlock = styled.div`
     min-height: 200px;
     width: calc(100% - 20px);
     margin: 10px;
+    background: none;
+    color: ${props=>props.theme.palette.black};
   }
   .content .imgs {
     flex-wrap: wrap;
