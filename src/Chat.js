@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext, useReducer, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, useReducer, useContext, useCallback } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useAuthState } from './AuthContext';
@@ -121,7 +121,6 @@ const ChatDiv = styled.div`
 function Chat() {
   const authState = useAuthState();
   const socket = useContext(SocketContext);
-  const chatLogRef = useRef([]);
   const [msg, setMsg] = useState('');
   const [state, dispatch] = useChatContext();
   const middleDom = useRef();
@@ -129,29 +128,40 @@ function Chat() {
     if(state.visible) {
       scrollToBottom();
     }
-    chatLogRef.current = state.chatLog;
   }, [state.visible, state.chatLog]);
+  const stateIdRef = useRef();
+  const userInfoRef = useRef();
+  useEffect(() => {
+    stateIdRef.current = state.id;
+    userInfoRef.current = authState.userInfo;
+  }, [state.id, authState.userInfo])
   useEffect(() => {
     socket.on('receive msg', (data) => {
       // 개별확인 test
-      if(data.fromId !== state.id) {
+      if(!userInfoRef.current) return;
+      if(data.fromId !== stateIdRef.current && userInfoRef.current.id !== data.fromId) {
+        console.log('authState.userInfo', userInfoRef.current);
         console.log('data.fromId', data.fromId);
         console.log('state.id', state.id);
-        console.log('다른사람');
-      }
+        console.log('incorrect');
+        return;
+      } else { console.log('correct')}
       const receive = {
         isMe: data.isMe,
         msg: data.msg,
         date: moment(data.date).fromNow()
       };
-      let newChatLog = [];
-      if(chatLogRef.current !== null) {
-        newChatLog = chatLogRef.current.concat(receive);
-      } else {
-        newChatLog = [receive];
-      }
-      chatLogRef.current = newChatLog;
-      dispatch({ type: 'CHAT_UPDATE', chatLog: newChatLog });
+      // let newChatLog = [];
+      // if(state.chatLog !== null) {
+      //   newChatLog = state.chatLog.concat(receive);
+      // } else {
+      //   newChatLog = [receive];
+      // }
+      // if(state.chatLog[state.chatLog.length-1] !== receive) {
+      dispatch({ type: 'CHAT_UPDATE', newChatLog: receive });
+      console.log(stateIdRef.current);
+      console.log(userInfoRef.current);
+      // }
       scrollToBottom();
     });
   }, []);
@@ -162,8 +172,7 @@ function Chat() {
   const onMsgChange = (e) => {
     setMsg(e.target.value);
   };
-  const sendMsg = (e) => {
-    console.log('socket',socket);
+  const sendMsg = useCallback((e) => {
     if(e.key !== 'Enter' || e.target.value === '' || !socket) return;
     socket.emit('send msg', {
       fromId: authState.userInfo.id,
@@ -172,7 +181,7 @@ function Chat() {
     });
     setMsg('');
     scrollToBottom();
-  };
+  }, [authState.userInfo, state.id, msg, socket]);
 
   const testLog = [
     {
@@ -275,7 +284,7 @@ const chatReducer = (state, action) => {
     case 'CHAT_OFF':
       return initialState;
     case 'CHAT_UPDATE':
-      return { ...state, chatLog: action.chatLog };
+      return { ...state, chatLog: state.chatLog.concat(action.newChatLog) };
     default:
       console.log('call default');
       return state;
@@ -316,4 +325,4 @@ export function chatOff(dispatch) {
   dispatch({ type: 'CHAT_OFF' });
 }
 
-export default Chat;
+export default React.memo(Chat);
