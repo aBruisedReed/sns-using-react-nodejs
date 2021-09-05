@@ -70,19 +70,19 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 ### To-do
-프로필 이름 눌렀을 때 user별 포스트 보기 ok
-/users 페이지 ok
-loading spin ok
-검색 ok
-빈 페이지(텅~) no 결과 뒤로가기 버튼 ok
-사진첨부 ok
-포스트 content 개행 구현 ok
-infinite scroll ok
-채팅 ok
+<!-- 프로필 이름 눌렀을 때 user별 포스트 보기 ok -->
+<!-- /users 페이지 ok -->
+<!-- loading spin ok -->
+<!-- 검색 ok -->
+<!-- 빈 페이지(텅~) no 결과 뒤로가기 버튼 ok -->
+<!-- 사진첨부 ok -->
+<!-- 포스트 content 개행 구현 ok -->
+<!-- infinite scroll ok -->
+<!-- 채팅 ok -->
 알림(이벤트) using socketio 
 댓글 알림,
 알림 레드 닷 안뜨는 문제, 
-다크모드 일 때 어색한 부분 textarea 수정
+<!-- 다크모드 일 때 어색한 부분 textarea 수정 ok -->
 thumbnail 구별로 최적화
 해쉬태그, 인물태그
 

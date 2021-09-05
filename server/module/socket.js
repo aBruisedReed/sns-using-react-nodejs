@@ -30,14 +30,15 @@ module.exports = server => {
       socketList = socketList.concat(socketInfo);
     });
 
-    socket.on('disconnect', function() {
-      socketList = socketList.filter(item => item !== socket);
+    socket.on('disconnect', () => {
+      socketList = socketList.filter(ele => ele.id !== socket.id);
       console.log('disconnected');
     });
 
     // chat
     socket.on('send msg', (data) => {
-      socketList.forEach(socket => console.log(socket.userInfo.name));
+      console.log('socket List');
+      socketList.forEach(socket => console.log(socket.id));
       console.log('send msg', data);
       const target = getTarget(socketList, data.toId);
       if(!target) {

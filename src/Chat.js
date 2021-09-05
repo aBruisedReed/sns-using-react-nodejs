@@ -133,6 +133,12 @@ function Chat() {
   }, [state.visible, state.chatLog]);
   useEffect(() => {
     socket.on('receive msg', (data) => {
+      // 개별확인 test
+      if(data.fromId !== state.id) {
+        console.log('data.fromId', data.fromId);
+        console.log('state.id', state.id);
+        console.log('다른사람');
+      }
       const receive = {
         isMe: data.isMe,
         msg: data.msg,

@@ -328,15 +328,15 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
 
   const socket = useContext(SocketContext);
   useEffect(() => {
-    socket.on('receive noti', () => {
-      console.log('call receive noti');
-      fetchNoti();
-    });
-    socket.on('receive msg', (data) => {
-      if(!data.isMe) {
-        fetchChats();
-      }
-    });
+    // socket.on('receive noti', () => {
+    //   console.log('call receive noti');
+    //   fetchNoti();
+    // });
+    // socket.on('receive msg', (data) => {
+    //   if(!data.isMe) {
+    //     fetchChats();
+    //   }
+    // });
   }, []);
   
   switch(menuNumber) {
