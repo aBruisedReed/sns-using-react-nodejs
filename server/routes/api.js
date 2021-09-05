@@ -413,19 +413,25 @@ router.get('/users/:id/noti', async (req, res) => {
     throw err;
   }
 });
+router.use('/users/:id/noti', authMiddleWare);
+router.delete('/users/:id/noti', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findOne({ id: id });
+    user.events = [];
+    await user.save();
+    res.json({ status: 'SUCCESS' });
+  } catch (err) {
+    throw err;
+  }
+});
 
 // --------------------dev--------------------
 router.get('/dev', async (req, res) => {
   try {
     postModel.deleteMany({}, (err) => { if(err) throw err });
     userModel.deleteMany({}, (err) => { if(err) throw err });
-    // const users = await userModel.find({});
-    // console.log(users);
-    // // for (let i = 0, len = users.length; i < len; i++) {
-    // //   users[i].chats = [];
-    // // }
-    // // await users.save();
-    res.json({result: 'sucess'});
+    res.json({ status: 'SUCCESS' });
   } catch (e) {
     /* handle error */
   }

@@ -16,6 +16,7 @@ import { Loading } from './CommonContext';
 import qs from 'qs';
 import PostImageGallery from './PostImageGallery';
 import { useChatContext, chatOn, chatOff } from './Chat';
+import { SocketContext } from './socket';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -33,6 +34,7 @@ function PostList({ type, match, location }) {
     ignoreQueryPrefix: true
   }).keyword : null; 
   const [itemCount, setItemCount] = useState(5);
+  const socket = useContext(SocketContext);
 
   const fetch = () => {
     switch(type) {
@@ -91,7 +93,7 @@ function PostList({ type, match, location }) {
           data.slice(0).reverse().map((item, idx) => {
             if(idx > itemCount) { return null; }
             else {
-              return (<PostItem key={item._id} data={item} />);
+              return (<PostItem key={item._id} data={item} socket={socket}/>);
             }
           })
           :
@@ -112,6 +114,7 @@ function PostItem(props) {
   const [galleryVisible, setGalleryVisible] = useState(false);
   const { palette } = useContext(ThemeContext);
   const [data, setData] = useState(props.data);
+  const { socket } = props;
   const [isMine, setIsMine] = useState(false); // 내가 글쓴이인지
   const [isLike, setIsLike] = useState(false); // 현재 게시물에 대한 좋아요 여부
   const authState = useAuthState();
@@ -119,6 +122,21 @@ function PostItem(props) {
   const authHeader = { headers: { 'x-access-token': `${authState.token}` } };
   const userImg = getUserImg(authState);
   const history = useHistory();
+  
+  // noti
+  const sendNoti = (socket, toId, postId, type) => {
+    const data = {
+      fromId: authState.userInfo.id,
+      toId: toId,
+      name: authState.userInfo.name,
+      img: authState.userInfo.image,
+      type: type,
+      postId: postId,
+      date: new Date()
+    };
+    console.log('send noti', socket);
+    socket.emit('send noti', data);
+  };
 
   useEffect(() => {
     if(authState.userInfo !== null) {
@@ -158,6 +176,7 @@ function PostItem(props) {
       setIsLike(!isLike);
       await axios.put(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}/like`, { isLike }, authHeader);
       await updateUser(authState, authDispatch);
+      sendNoti(socket, data.authorId, data._id, 'like');
       updatePost();
     } else {
       alert('먼저 로그인해야 합니다.');

@@ -79,7 +79,10 @@ loading spin ok
 포스트 content 개행 구현 ok
 infinite scroll ok
 채팅 ok
-알림(이벤트) using socketio ok
+알림(이벤트) using socketio 
+댓글 알림,
+알림 레드 닷 안뜨는 문제, 
+다크모드 일 때 어색한 부분 textarea 수정
 thumbnail 구별로 최적화
 해쉬태그, 인물태그
 

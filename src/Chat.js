@@ -114,6 +114,7 @@ const ChatDiv = styled.div`
   }
   .lower input {
     width: 100%;
+    color: ${props=>props.theme.palette.black};
   }
 `;
 

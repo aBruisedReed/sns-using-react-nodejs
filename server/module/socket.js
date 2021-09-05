@@ -37,6 +37,7 @@ module.exports = server => {
 
     // chat
     socket.on('send msg', (data) => {
+      socketList.forEach(socket => console.log(socket.userInfo.name));
       console.log('send msg', data);
       const target = getTarget(socketList, data.toId);
       if(!target) {
@@ -104,22 +105,24 @@ module.exports = server => {
 
     // notification
     socket.on('send noti', async (data) => {
-      const target = getTarget(socketList, data.toId);
-      if(!target) {
-        console.log('target is not found in socket list');
-      } else {
-        console.log('target\'s socket id', target.id);
-        io.to(target.id).emit('receive noti');
-      }
-
-      // db 저장 
+      console.log('data', data);
       try {
-        const user = await userModel.findOne({ id:  data.fromId });
+        console.log('send noti');
+        const target = getTarget(socketList, data.toId);
+        if(!target) {
+          console.log('target is not found in socket list');
+        } else {
+          console.log('target\'s socket id', target.id);
+          io.to(target.id).emit('receive noti');
+        }
+
+        // db 저장 
+        const user = await userModel.findOne({ id:  data.toId });
         user.events = user.events.concat({
-          id: data.toId,
+          id: data.fromId,
           name: data.name,
           img: data.img,
-          type: data.type,
+          notiType: data.type,
           postId: data.postId,
           date: data.date
         });

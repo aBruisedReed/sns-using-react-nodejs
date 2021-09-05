@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Loading } from './CommonContext';
-import { BsPencilSquare, BsDot } from 'react-icons/bs';
+import { SocketContext } from './socket';
+import { RiDeleteBack2Line } from 'react-icons/ri';
 import { RiMoonClearFill } from 'react-icons/ri';
 import { BiExit } from 'react-icons/bi';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -109,16 +110,12 @@ const TopbarDropdownBlock = styled.div`
   .noti-detail {
     display: inline;
     font-size: 14px;
+    width: 180px;
   }
   .noti-detail span {
     display: inline;
     font-weight: bold;
     color: ${props=>props.theme.palette.blue};
-  }
-
-  .unread-dot {
-    align-items: center;
-    width: 30px;
   }
 
   & * {
@@ -274,6 +271,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
   const [noti, setNoti] = useState([]);
   const fetchNoti = async () => {
     setLoading(true);
+    console.log('authState',authState);
     await updateUser(authState, authDispatch);
     const resNoti = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${authState.userInfo.id}/noti`);
     setNoti(resNoti.data);
@@ -317,11 +315,29 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
     };
   };
 
+  // noti
   const toPosts = (id) => {
     return () => {
       history.push(`/posts/${id}`)
     }
   };
+  const delNoti = async () => {
+    setNoti([]);
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/api/users/${authState.userInfo.id}/noti`);
+  };
+
+  const socket = useContext(SocketContext);
+  useEffect(() => {
+    socket.on('receive noti', () => {
+      console.log('call receive noti');
+      fetchNoti();
+    });
+    socket.on('receive msg', (data) => {
+      if(!data.isMe) {
+        fetchChats();
+      }
+    });
+  }, []);
   
   switch(menuNumber) {
     case 0:
@@ -366,10 +382,13 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
           <TopbarDropdownBlock ref={menuDom} >
             <div className="header">
               <h1>알림</h1>
+              <div className="wrap-icon btn" onClick={delNoti}>
+                <RiDeleteBack2Line size="20px" />
+              </div>
             </div>
             <div className="notis">
               {noti && noti.length !== 0 && !loading ?
-                  noti.map((data, idx) => (
+                  noti.slice(0).reverse().map((data, idx) => (
                     <div className="noti btn" key={idx} onClick={toPosts(data.postId)}>
                       <div className="profile">
                         <img src={data.img} alt="profile" />
@@ -377,7 +396,7 @@ function TopbarDropdown({ menu, closeMenu, topbarDom, darkMode, setDarkMode }) {
                       <div className="info">
                         <div className="noti-detail">
                           <span>{data.name}</span>님이 {
-                            data.type === 'cmt' ?
+                            data.notiType === 'cmt' ?
                               '게시물에 댓글을 달았습니다.' :
                               '게시물에 좋아요를 눌렀습니다.'
                           }

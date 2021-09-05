@@ -31,7 +31,7 @@ const User = new mongoose.Schema({
     id: String,
     name: String,
     img: String,
-    type: String,
+    notiType: String,
     postId: String,
     date: Date
   }],

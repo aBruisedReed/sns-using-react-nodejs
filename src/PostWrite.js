@@ -222,7 +222,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
           headers: { 'x-access-token': `${authState.token}` }
         });
     } else {
-      await axios.post('${process.env.REACT_APP_SERVER_URL}/api/posts', { author, content, authorId, authorImg, imgsUrl },
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts`, { author, content, authorId, authorImg, imgsUrl },
         {
           headers: { 'x-access-token': `${authState.token}` }
         });
