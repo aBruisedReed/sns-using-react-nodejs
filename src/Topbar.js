@@ -324,6 +324,9 @@ function Topbar({ darkMode, setDarkMode }) {
         setChatNoti(true);
       }
     });
+    return () => {
+      socket.off('receive noti');
+    };
   }, []);
 
   return (

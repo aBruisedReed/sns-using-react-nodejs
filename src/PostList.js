@@ -205,6 +205,7 @@ function PostItem(props) {
     if(e.key !== 'Enter' || e.target.value === '') return;
     // todo: current user 동적으로 
     await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts/${data._id}/comments`, { author: authState.userInfo.name, comment: cmt, authorId: authState.userInfo.id, authorImg: authState.userInfo.image });
+    sendNoti(socket, data.authorId, data._id, 'cmt');
     setCmt('');
     updatePost();
   };

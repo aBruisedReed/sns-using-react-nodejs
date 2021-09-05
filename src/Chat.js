@@ -137,30 +137,16 @@ function Chat() {
   }, [state.id, authState.userInfo])
   useEffect(() => {
     socket.on('receive msg', (data) => {
-      // 개별확인 test
       if(!userInfoRef.current) return;
       if(data.fromId !== stateIdRef.current && userInfoRef.current.id !== data.fromId) {
-        console.log('authState.userInfo', userInfoRef.current);
-        console.log('data.fromId', data.fromId);
-        console.log('state.id', state.id);
-        console.log('incorrect');
         return;
-      } else { console.log('correct')}
+      }
       const receive = {
         isMe: data.isMe,
         msg: data.msg,
         date: moment(data.date).fromNow()
       };
-      // let newChatLog = [];
-      // if(state.chatLog !== null) {
-      //   newChatLog = state.chatLog.concat(receive);
-      // } else {
-      //   newChatLog = [receive];
-      // }
-      // if(state.chatLog[state.chatLog.length-1] !== receive) {
       dispatch({ type: 'CHAT_UPDATE', newChatLog: receive });
-      console.log(stateIdRef.current);
-      console.log(userInfoRef.current);
       // }
       scrollToBottom();
     });
@@ -182,54 +168,6 @@ function Chat() {
     setMsg('');
     scrollToBottom();
   }, [authState.userInfo, state.id, msg, socket]);
-
-  const testLog = [
-    {
-      isMe: true,
-      msg: 'hi hello it`s me',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend sadfdasf sadf asdf sdafs ',
-      date: new Date()
-    },
-    {
-      isMe: true,
-      msg: 'hi hello it`s me',
-      date: new Date()
-    },
-    {
-      isMe: true,
-      msg: 'hi hello it`s me sadfdasf sadf asdf sdafsa sdfasdf asd ',
-      date: new Date()
-    },
-    {
-      isMe: false,
-      msg: 'hello my friend',
-      date: new Date()
-    },
-  ];
 
   if(!state.visible) return null;
   return (
