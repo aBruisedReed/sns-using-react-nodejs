@@ -30,7 +30,7 @@ const error = error => ({
 });
 
 function postReducer(state, action) {
-  console.log(action);
+  // console.log(action);
   switch (action.type) {
     case 'GET_POST': 
       return {

@@ -21,7 +21,7 @@ function authReducer(state, action) {
     case 'LOGOUT':
       return initialState;
     default:
-      console.log('call default in auth reducer');
+      // console.log('call default in auth reducer');
       return state;
   }
 }
@@ -59,7 +59,7 @@ export function useAuthDispatch() {
 export function AuthInit({ location, history }) {
   const dispatch = useAuthDispatch();
   const socket = useContext(SocketContext);
-  console.log('here socket', socket);
+  // console.log('here socket', socket);
   useEffect(() => {
     const query = qs.parse(location.search, { ignoreQueryPrefix: true });
     if(!query.t) return null;
@@ -68,9 +68,9 @@ export function AuthInit({ location, history }) {
       userId: queryDecoded.id,
       userName: queryDecoded.name
     });
-    console.log('socket',)
+    // console.log('socket',)
     const userInfo = { ...queryDecoded, socket };
-    console.log('ui', userInfo);
+    // console.log('ui', userInfo);
     dispatch({ type: 'LOGIN', token: query.t, authenticated: true, userInfo: userInfo });
     axios.defaults.headers.common['x-access-token'] = query.t;
     history.push('/');

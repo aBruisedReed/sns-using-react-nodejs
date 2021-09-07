@@ -397,7 +397,7 @@ router.get('/users/:id/chat/:targetId', async (req, res, next) => {
     } 
     res.json(result);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.json([]);
     // throw err;
   }
@@ -407,7 +407,7 @@ router.get('/users/:id/noti', async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userModel.findOne({ id: id });
-    console.log(user.events, 'userevents');
+    // console.log(user.events, 'userevents');
     res.json(user.events);
   } catch (err) {
     throw err;
@@ -427,13 +427,13 @@ router.delete('/users/:id/noti', async (req, res) => {
 });
 
 // --------------------dev--------------------
-router.get('/dev', async (req, res) => {
-  try {
-    postModel.deleteMany({}, (err) => { if(err) throw err });
-    userModel.deleteMany({}, (err) => { if(err) throw err });
-    res.json({ status: 'SUCCESS' });
-  } catch (e) {
-    /* handle error */
-  }
-})
+// router.get('/dev/init', async (req, res) => { // db docs 초기화
+//   try {
+//     postModel.deleteMany({}, (err) => { if(err) throw err });
+//     userModel.deleteMany({}, (err) => { if(err) throw err });
+//     res.json({ status: 'SUCCESS' });
+//   } catch (e) {
+//     [> handle error <]
+//   }
+// })
 module.exports = router;

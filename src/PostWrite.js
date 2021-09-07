@@ -286,7 +286,7 @@ function PostWrite({ visible, setVisible, isModify, data }) {
     imageInputDom.current.click(); 
   };
   const onImgChange = async (e) => {
-    console.log('call on change');
+    // console.log('call on change');
     await setImg(e.target.files[0]);
   };
   useEffect(() => {
@@ -295,21 +295,21 @@ function PostWrite({ visible, setVisible, isModify, data }) {
     }
   }, [img]);
   const uploadImage = async () => {
-    console.log('call uploadImage');
+    // console.log('call uploadImage');
     // todo: loading spin
     try {
       setUploading(true);
-      console.log('img', img);
+      // console.log('img', img);
       const formData = new FormData();
       formData.append('file', img);
       const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/files/image`, formData);
-      console.log('url', res.data.url);
+      // console.log('url', res.data.url);
       await setImgsUrl(imgsUrl.concat(`${process.env.REACT_APP_SERVER_URL}/api${res.data.url}`));
-      console.log(imgsUrl); // []
-      console.log(res);
+      // console.log(imgsUrl); // []
+      // console.log(res);
     } catch (err) {
       alert('이미지 업로드 실패');
-      console.log(err);
+      // console.log(err);
     } finally {
       setUploading(false);
     }
@@ -322,11 +322,11 @@ function PostWrite({ visible, setVisible, isModify, data }) {
 
   const peopleTag = () => {
     // todo: 구현
-    console.log('미구현');
+    // console.log('미구현');
   };
 
   const hashTag = () => {
-    console.log('미구현');
+    // console.log('미구현');
   };
   
   if(!visible) return null;

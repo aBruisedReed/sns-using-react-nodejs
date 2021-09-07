@@ -79,9 +79,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 <!-- 포스트 content 개행 구현 ok -->
 <!-- infinite scroll ok -->
 <!-- 채팅 ok -->
-알림(이벤트) using socketio 
-댓글 알림,
-알림 레드 닷 안뜨는 문제, 
+<!-- 알림(이벤트) using socketio  -->
+<!-- 댓글 알림, -->
+<!-- 알림 레드 닷 안뜨는 문제,  -->
 <!-- 다크모드 일 때 어색한 부분 textarea 수정 ok -->
 thumbnail 구별로 최적화
 해쉬태그, 인물태그
@@ -94,4 +94,6 @@ resposive web (https://www.devpools.kr/2018/04/27/2018-04-27-Responsive-Web%EC%9
 evnets, noti, chat, msg 등 naming이 일정치 않았다.
 메세지 데이터를 각각 관리가 아니라 room 개념으로 할 걸 그랬다.
 commit message 작성에 일관성이 없었다. feat, fix 등의 타입 분류가 필요해보인다. 그리고 이건 간단한 프로젝트이긴 하지만 main 브랜치 하나만 사용했다.
+injection 방어 등의 보안을 생각해보기
+
 

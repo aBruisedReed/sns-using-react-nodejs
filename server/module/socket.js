@@ -16,13 +16,13 @@ module.exports = server => {
       methods: ['GET', 'POST']
     }
   });
-  console.log('socket on');
+  //console.log('socket on');
   let socketList = [];
 
   io.on('connection', (socket) => {
-    console.log('connected');
+    //console.log('connected');
     socket.on('init', (data) => { // client에서 로그인 시 socket list에 추가
-      console.log('init socket', socket.id, data);
+      //console.log('init socket', socket.id, data);
       const socketInfo = {
         ...socket,
         userInfo: data
@@ -32,20 +32,19 @@ module.exports = server => {
 
     socket.on('disconnect', () => {
       socketList = socketList.filter(ele => ele.id !== socket.id);
-      console.log('disconnected');
+      //console.log('disconnected');
     });
 
     // chat
     socket.on('send msg', (data) => {
-      console.log('socket List');
-      socketList.forEach(socket => console.log(socket.id));
-      console.log('send msg', data);
+      //console.log('socket List');
+      //console.log('send msg', data);
       const target = getTarget(socketList, data.toId);
       if(!target) {
         // 상대가 접속 중이 아닐 때
-        console.log('target is not found in socket list');
+        // console.log('target is not found in socket list');
       } else {
-        console.log('target\'s socket id', target.id);
+        // console.log('target\'s socket id', target.id);
         data.isMe = false;
         io.to(target.id).emit('receive msg' , data);
       }
@@ -106,14 +105,14 @@ module.exports = server => {
 
     // notification
     socket.on('send noti', async (data) => {
-      console.log('data', data);
+      // console.log('data', data);
       try {
-        console.log('send noti');
+        // console.log('send noti');
         const target = getTarget(socketList, data.toId);
         if(!target) {
-          console.log('target is not found in socket list');
+          // console.log('target is not found in socket list');
         } else {
-          console.log('target\'s socket id', target.id);
+          // console.log('target\'s socket id', target.id);
           io.to(target.id).emit('receive noti');
         }
 

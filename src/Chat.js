@@ -215,7 +215,7 @@ const initialState = {
 };
 
 const chatReducer = (state, action) => {
-  console.log(action);
+  // console.log(action);
   switch(action.type) {
     case 'CHAT_ON': 
       return { id: action.id, visible: action.visible, name: action.name, profile: action.profile, chatLog: action.chatLog };
@@ -224,7 +224,7 @@ const chatReducer = (state, action) => {
     case 'CHAT_UPDATE':
       return { ...state, chatLog: state.chatLog.concat(action.newChatLog) };
     default:
-      console.log('call default');
+      // console.log('call default');
       return state;
   }
 };
@@ -253,10 +253,10 @@ export function useChatContext() {
 }
 
 export async function chatOn(dispatch, id, name, myId) {
-  console.log('call chatOn');
+  // console.log('call chatOn');
   const profile = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${id}/profile`);
   const chatLog = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/users/${myId}/chat/${id}`)
-  console.log('chatLog', chatLog);
+  // console.log('chatLog', chatLog);
   dispatch({ type: 'CHAT_ON', id: id, name: name, profile: profile.data, chatLog: chatLog.data, visible: true });
 }
 export function chatOff(dispatch) {

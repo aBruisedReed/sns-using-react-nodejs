@@ -30,7 +30,7 @@ const error = error => ({
 });
 
 function reducer(state, action) {
-  console.log(action);
+  // console.log(action);
   switch (action.type) {
     case 'GET_USER': 
       return {

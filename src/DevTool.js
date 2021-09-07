@@ -39,7 +39,7 @@ function DevTool() {
   const handleLogin = (info) => {
     return async () => {
       const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/login/dev`, {user: info });
-      console.log(res.data);
+      // console.log(res.data);
       window.open(`${process.env.REACT_APP_CLIENT_URL}?t=${res.data}`, "_self");
     }
   }
