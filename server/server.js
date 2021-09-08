@@ -31,11 +31,6 @@ socket(server);
 app.use('/api', api);
 app.use('/auth', auth);
 
-// todo: del it
-app.get('/dev/session', function(req, res, next) {
-  res.json(req.session);
-})
-
 // app은 서버를 시작하며 3002 포트 연결을 listening
 const port = 3002;
 server.listen(port, () => {

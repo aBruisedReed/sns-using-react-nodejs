@@ -322,7 +322,6 @@ router.get('/users/:id/chat', async (req, res) => {
   const { id } = req.params;
   try {
     const user = await userModel.findOne({ id: id });
-    let targetList = [];
     const targets =  user.chats.map(async (chat) => {
       return {
         ...( await userModel.findOne({ id: chat.targetId }))._doc,
@@ -435,5 +434,8 @@ router.delete('/users/:id/noti', async (req, res) => {
 //   } catch (e) {
 //     [> handle error <]
 //   }
-// })
+// });
+// router.get('/dev/session', (req, res) => {
+//   res.json(req.session);
+// });
 module.exports = router;
