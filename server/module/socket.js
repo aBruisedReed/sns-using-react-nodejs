@@ -1,5 +1,6 @@
 const socketio = require('socket.io');
 const userModel = require('../config/db').userModel;
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 
 const getTarget = (socketList, userId) => {
   const filtered = socketList.filter(socket => {
@@ -12,7 +13,7 @@ const getTarget = (socketList, userId) => {
 module.exports = server => {
   const io = socketio(server, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: process.env.CLIENT_URL,
       methods: ['GET', 'POST']
     }
   });
