@@ -32,7 +32,7 @@ app.use('/api', api);
 app.use('/auth', auth);
 
 // app은 서버를 시작하며 3002 포트 연결을 listening
-const port = 3002;
+const port = process.env.SERVER_PORT;
 server.listen(port, () => {
   console.log(`express is running on ${port}`)
 });
