@@ -222,6 +222,9 @@ const chatReducer = (state, action) => {
     case 'CHAT_OFF':
       return initialState;
     case 'CHAT_UPDATE':
+      if(state.chatLog === null) {
+        return { ...state, chatLog: [action.newChatLog] };
+      }
       return { ...state, chatLog: state.chatLog.concat(action.newChatLog) };
     default:
       // console.log('call default');
