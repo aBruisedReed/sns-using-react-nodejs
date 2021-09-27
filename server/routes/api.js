@@ -279,7 +279,7 @@ router.post('/files/image', upload.single('file'), (req, res, next) => {
 });
 
 router.get('/files/image/:filename', (req, res) => {
-  res.sendFile(req.params.filename, { root: path.join(`${__dirname}/..`, 'uploads') });
+  res.sendFile(req.params.filename, { root: path.join(`${__dirname}/../..`, 'uploads') });
 });
 
 // --------------------chat--------------------
